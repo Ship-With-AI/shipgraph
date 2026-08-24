@@ -1,0 +1,47 @@
+{
+  "name": "@shipgraph/core",
+  "version": "0.2.0",
+  "description": "Framework-agnostic graph visualization core — engine seam + data adapter + NVL-grade feel primitives, wrapping force-graph (Canvas 2D + d3-force) behind a shipgraph-owned API.",
+  "license": "MIT",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "bundle": "tsup",
+    "build": "npm run typecheck && npm run bundle",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "vite --config demo/vite.config.ts",
+    "perf": "node demo/perf.mjs"
+  },
+  "dependencies": {
+    "force-graph": "^1.49.5"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.11.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ship-With-AI/shipgraph.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
