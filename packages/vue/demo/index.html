@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@shipgraph/vue demo — &lt;ShipGraph&gt; on real graph.json</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      html, body, #app { margin: 0; height: 100%; background: #0b0f14; color: #e6edf3;
+        font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; overflow: hidden; }
+      #app { position: fixed; inset: 0; }
+      .panel { position: fixed; z-index: 10; background: rgba(13,18,24,.82);
+        border: 1px solid #26303c; border-radius: 8px; padding: 10px 12px; backdrop-filter: blur(6px); }
+      #hud { top: 10px; left: 10px; min-width: 220px; }
+      #hud h1 { font-size: 12px; margin: 0 0 6px; letter-spacing: .04em; color: #9db3c9; text-transform: uppercase; }
+      #hud .row { display: flex; justify-content: space-between; gap: 12px; margin: 2px 0; }
+      #hud .row b { color: #6ee7b7; font-variant-numeric: tabular-nums; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

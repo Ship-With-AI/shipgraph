@@ -1,0 +1,68 @@
+{
+  "component": "@shipgraph/vue <ShipGraph>",
+  "url": "http://localhost:5191/",
+  "chrome": "Chrome/131.0.6778.204",
+  "at": "2026-08-24T17:18:09.329Z",
+  "runs": [
+    {
+      "scale": 1,
+      "nodes": 645,
+      "links": 755,
+      "settleMs": 9949,
+      "active": {
+        "scale": 1,
+        "nodes": 645,
+        "links": 755,
+        "fps": 59.7,
+        "frameMsP95": 18.1,
+        "settled": false
+      },
+      "interact": {
+        "scale": 1,
+        "nodes": 645,
+        "links": 755,
+        "fps": 47.2,
+        "frameMsP95": 25.2,
+        "settled": false
+      },
+      "settledInteract": {
+        "scale": 1,
+        "nodes": 645,
+        "links": 755,
+        "fps": 60.3,
+        "frameMsP95": 66.8,
+        "settled": true
+      }
+    },
+    {
+      "scale": 5,
+      "nodes": 3225,
+      "links": 3855,
+      "settleMs": 9697,
+      "active": {
+        "scale": 5,
+        "nodes": 3225,
+        "links": 3855,
+        "fps": 30.5,
+        "frameMsP95": 71.8,
+        "settled": false
+      },
+      "interact": {
+        "scale": 5,
+        "nodes": 3225,
+        "links": 3855,
+        "fps": 40.5,
+        "frameMsP95": 31.1,
+        "settled": false
+      },
+      "settledInteract": {
+        "scale": 5,
+        "nodes": 3225,
+        "links": 3855,
+        "fps": 60.7,
+        "frameMsP95": 31,
+        "settled": true
+      }
+    }
+  ]
+}

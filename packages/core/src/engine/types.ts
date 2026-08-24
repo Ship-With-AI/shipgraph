@@ -76,6 +76,8 @@ export interface GraphEngine {
   onNodeClick(cb: (id: string) => void): void;
   onNodeDrag(cb: (id: string) => void): void;
   onNodeDragEnd(cb: (id: string) => void): void;
+  onLinkHover(cb: (link: GraphLink | null) => void): void;
+  onLinkClick(cb: (link: GraphLink) => void): void;
   onRenderFramePre(cb: () => void): void;
   onEngineStop(cb: () => void): void;
 

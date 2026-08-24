@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @shipgraph/core",
-    "test": "npm run test -w @shipgraph/core"
+    "build": "npm run build -w @shipgraph/core && npm run build -w @shipgraph/vue",
+    "test": "npm run test -w @shipgraph/core && npm run test -w @shipgraph/vue"
   }
 }

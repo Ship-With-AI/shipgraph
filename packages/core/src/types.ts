@@ -94,11 +94,25 @@ export interface ShipGraphOptions {
   reducedMotion?: boolean;
 }
 
-export type ShipGraphEvent = 'hover' | 'click' | 'settle' | 'dragend' | 'frame';
+export type ShipGraphEvent =
+  | 'hover'
+  | 'click'
+  | 'linkhover'
+  | 'linkclick'
+  | 'focus'
+  | 'settle'
+  | 'dragend'
+  | 'frame';
 
 export interface ShipGraphEventMap {
   hover: string | null;
   click: string;
+  /** 1-hop link hover (null clears). Endpoints are node ids. */
+  linkhover: GraphLink | null;
+  /** Link click. Endpoints are node ids. */
+  linkclick: GraphLink;
+  /** Fires when a node is focused (camera easing begins). */
+  focus: string;
   settle: void;
   dragend: string;
   /** Fires before each engine render frame (drive perf HUDs / overlays). */
