@@ -1,0 +1,67 @@
+{
+  "url": "http://localhost:5190/",
+  "chrome": "Chrome/131.0.6778.204",
+  "at": "2026-08-24T16:53:19.762Z",
+  "runs": [
+    {
+      "scale": 1,
+      "nodes": 645,
+      "links": 755,
+      "settleMs": 9761,
+      "active": {
+        "scale": 1,
+        "nodes": 645,
+        "links": 755,
+        "fps": 60.1,
+        "frameMsP95": 16.9,
+        "settled": false
+      },
+      "interact": {
+        "scale": 1,
+        "nodes": 645,
+        "links": 755,
+        "fps": 60.1,
+        "frameMsP95": 16.9,
+        "settled": false
+      },
+      "settledInteract": {
+        "scale": 1,
+        "nodes": 645,
+        "links": 755,
+        "fps": 60.1,
+        "frameMsP95": 17.2,
+        "settled": true
+      }
+    },
+    {
+      "scale": 5,
+      "nodes": 3225,
+      "links": 3855,
+      "settleMs": 9864,
+      "active": {
+        "scale": 5,
+        "nodes": 3225,
+        "links": 3855,
+        "fps": 60.8,
+        "frameMsP95": 102.9,
+        "settled": false
+      },
+      "interact": {
+        "scale": 5,
+        "nodes": 3225,
+        "links": 3855,
+        "fps": 44,
+        "frameMsP95": 31.7,
+        "settled": false
+      },
+      "settledInteract": {
+        "scale": 5,
+        "nodes": 3225,
+        "links": 3855,
+        "fps": 60.1,
+        "frameMsP95": 17.1,
+        "settled": true
+      }
+    }
+  ]
+}

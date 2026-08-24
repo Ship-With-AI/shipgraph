@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** NVL/Bloom-grade *feel* (springy physics, hover halos, eased focus
 camera) in an MIT, framework-agnostic component.
-**Current focus:** Phase 1 (Research & Spike) complete → Phase 2 (Core Architecture) next.
+**Current focus:** Phase 2 (Core Architecture) complete → Phase 3 (Vue Wrapper & Feel Polish) next.
 
 ## Milestone
 
@@ -22,7 +22,8 @@ with StackMap's graph, published to npm, StackMap migrated.
 | Research | RESEARCH.md complete — decision: **wrap `force-graph` (MIT)** |
 | Spike | `spikes/` — runnable feel-bar on real graph.json + headless perf harness |
 | Phase 1 | Complete (2026-08-24) |
-| Phase 2+ | Not started |
+| Phase 2 | Complete (2026-08-24) — `@shipgraph/core` (engine seam + adapter + feel primitives) |
+| Phase 3+ | Not started |
 
 ## Key Decision (locked by spike evidence)
 
@@ -33,5 +34,4 @@ Cytoscape+fcose (flat feel). Measured: 60fps @1×, ~57fps settled interaction @5
 
 ## Next Action
 
-`/gsd-plan-phase 2` — plan the framework-agnostic core (engine seam, data model,
-adapter, feel primitives API).
+`/gsd-plan-phase 3` — Vue 3 wrapper (`@shipgraph/vue`) over the core + NVL feel polish.

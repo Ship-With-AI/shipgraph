@@ -15,7 +15,7 @@ demo, then migrate StackMap onto it and delete the old Cytoscape view.
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Research & Spike** - Build-vs-wrap decision, proven on real data
-- [ ] **Phase 2: Core Architecture** - Framework-agnostic TS core + feel primitives
+- [x] **Phase 2: Core Architecture** - Framework-agnostic TS core + feel primitives
 - [ ] **Phase 3: Vue Wrapper & Feel Polish** - Vue 3 binding + NVL-grade feel bar
 - [ ] **Phase 4: Feature-Parity Port** - Filters, community focus, deep link, a11y
 - [ ] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
@@ -55,8 +55,8 @@ behind a renderer/physics seam so a WebGL backend can slot in later.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Engine seam + data model + adapter + build tooling
-- [ ] 02-02: Feel primitives API (physics, halo, focus camera, drag, reduced-motion)
+- [x] 02-01: Engine seam + data model + adapter + build tooling
+- [x] 02-02: Feel primitives API (physics, halo, focus camera, drag, reduced-motion)
 
 ### Phase 3: Vue Wrapper & Feel Polish
 **Goal**: `@shipgraph/vue` — a Vue 3 component over the core — plus the polish
@@ -151,7 +151,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Research & Spike | 1/1 | Complete | 2026-08-24 |
-| 2. Core Architecture | 0/2 | Not started | - |
+| 2. Core Architecture | 2/2 | Complete | 2026-08-24 |
 | 3. Vue Wrapper & Feel Polish | 0/2 | Not started | - |
 | 4. Feature-Parity Port | 0/2 | Not started | - |
 | 5. React & Svelte Wrappers | 0/2 | Not started | - |
