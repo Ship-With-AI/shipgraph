@@ -1,0 +1,19 @@
+{
+  "name": "shipgraph-spike-feel-bar",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Feel-bar spike: force-graph on StackMap real graph.json — elasticity, hover 1-hop halo, eased focus camera. Perf measured at 1x and 5x.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173 --strictPort"
+  },
+  "dependencies": {
+    "force-graph": "^1.49.5"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.11.1",
+    "vite": "^5.4.10"
+  }
+}
