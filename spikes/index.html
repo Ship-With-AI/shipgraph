@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>shipgraph spike — force-graph feel bar</title>
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: #0b0f14; color: #e6edf3;
+        font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; overflow: hidden; }
+      #graph { position: fixed; inset: 0; }
+      #hud { position: fixed; top: 10px; left: 10px; z-index: 10;
+        background: rgba(13,18,24,.82); border: 1px solid #26303c; border-radius: 8px;
+        padding: 10px 12px; min-width: 220px; backdrop-filter: blur(6px); }
+      #hud h1 { font-size: 12px; margin: 0 0 6px; letter-spacing: .04em; color: #9db3c9; text-transform: uppercase; }
+      #hud .row { display: flex; justify-content: space-between; gap: 12px; margin: 2px 0; }
+      #hud .row b { color: #6ee7b7; font-variant-numeric: tabular-nums; }
+      #hud .bad { color: #f87171; }
+      #controls { position: fixed; top: 10px; right: 10px; z-index: 10;
+        background: rgba(13,18,24,.82); border: 1px solid #26303c; border-radius: 8px; padding: 10px 12px; }
+      #controls label { display: block; margin: 3px 0; cursor: pointer; }
+      #controls .btn { display: inline-block; margin: 4px 4px 0 0; padding: 4px 8px;
+        border: 1px solid #2f6feb; border-radius: 6px; background: #16233b; color: #cfe0ff; cursor: pointer; }
+      #legend { position: fixed; bottom: 10px; left: 10px; z-index: 10;
+        background: rgba(13,18,24,.82); border: 1px solid #26303c; border-radius: 8px; padding: 8px 10px; max-width: 46vw; }
+      #legend span { display: inline-flex; align-items: center; margin: 2px 8px 2px 0; }
+      #legend i { width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; display: inline-block; }
+    </style>
+  </head>
+  <body>
+    <div id="graph"></div>
+    <div id="hud">
+      <h1>Perf HUD</h1>
+      <div class="row"><span>fps (ema)</span><b id="fps">–</b></div>
+      <div class="row"><span>frame ms (p95)</span><b id="ms">–</b></div>
+      <div class="row"><span>nodes</span><b id="nn">–</b></div>
+      <div class="row"><span>links</span><b id="nl">–</b></div>
+      <div class="row"><span>scale</span><b id="scale">1x</b></div>
+      <div class="row"><span>settled</span><b id="settled">no</b></div>
+    </div>
+    <div id="controls">
+      <label><input type="checkbox" id="reduceMotion" /> reduced motion</label>
+      <span class="btn" id="scale1">1x</span>
+      <span class="btn" id="scale5">5x</span>
+      <span class="btn" id="reheat">reheat</span>
+    </div>
+    <div id="legend"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
