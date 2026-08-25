@@ -1,0 +1,52 @@
+name: Release
+
+# Fires only on version tags (e.g. v0.1.0). Publishing the four MIT packages
+# to npm with provenance. No tag => no publish.
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for npm provenance
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install
+        run: npm ci
+
+      - name: Build (type-check + bundle, all packages)
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Publish @shipgraph/core
+        run: npm publish -w @shipgraph/core --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @shipgraph/vue
+        run: npm publish -w @shipgraph/vue --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @shipgraph/react
+        run: npm publish -w @shipgraph/react --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @shipgraph/svelte
+        run: npm publish -w @shipgraph/svelte --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

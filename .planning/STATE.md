@@ -6,7 +6,8 @@ See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** NVL/Bloom-grade *feel* (springy physics, hover halos, eased focus
 camera) in an MIT, framework-agnostic component.
-**Current focus:** Phase 6 (Docs & Demo Site) complete → Phase 7 (npm Publish) next.
+**Current focus:** Phase 7 (npm Publish) — release pipeline PREP+DRY-RUN complete;
+real `npm publish` gated on operator approval.
 
 ## Milestone
 
@@ -27,7 +28,8 @@ with StackMap's graph, published to npm, StackMap migrated.
 | Phase 4 | Complete (2026-08-25) — edge filters, community focus, `?focus=` deep link, a11y |
 | Phase 5 | Complete (2026-08-25) — `@shipgraph/react` + `@shipgraph/svelte` thin bindings |
 | Phase 6 | Complete (2026-08-25) — `docs/` VitePress site: install/quickstart/API ×4 + live Vue feel-bar demo on real graph.json |
-| Phase 7+ | Not started |
+| Phase 7 | Pipeline ready (2026-08-25) — package.json publish-ready ×4, LICENSE+README ×4, ci.yml+release.yml, all 4 `npm publish --dry-run` verified. **Real publish pending operator go.** |
+| Phase 8+ | Not started |
 
 ## Key Decision (locked by spike evidence)
 
@@ -38,4 +40,4 @@ Cytoscape+fcose (flat feel). Measured: 60fps @1×, ~57fps settled interaction @5
 
 ## Next Action
 
-`/gsd-plan-phase 7` — npm publish: MIT package(s), CI, versioning (gated).
+Operator authorizes real publish → push tag `v0.1.0` (fires release.yml). Then Phase 8: StackMap migration.

@@ -1,6 +1,6 @@
 {
   "name": "@shipgraph/svelte",
-  "version": "0.5.0",
+  "version": "0.1.0",
   "description": "Svelte binding for shipgraph — an idiomatic, SSR-safe <ShipGraph> component over @shipgraph/core. Public props/events are engine-agnostic.",
   "license": "MIT",
   "type": "module",
@@ -16,7 +16,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {
@@ -27,10 +28,8 @@
     "test:watch": "vitest"
   },
   "peerDependencies": {
+    "@shipgraph/core": "^0.1.0",
     "svelte": "^5.0.0"
-  },
-  "dependencies": {
-    "@shipgraph/core": "workspace:*"
   },
   "devDependencies": {
     "@shipgraph/core": "*",
@@ -46,10 +45,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ship-With-AI/shipgraph.git",
+    "url": "git+https://github.com/Ship-With-AI/shipgraph.git",
     "directory": "packages/svelte"
   },
+  "homepage": "https://github.com/Ship-With-AI/shipgraph/tree/main/packages/svelte#readme",
+  "bugs": {
+    "url": "https://github.com/Ship-With-AI/shipgraph/issues"
+  },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   }
 }

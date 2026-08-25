@@ -1,6 +1,6 @@
 {
   "name": "@shipgraph/vue",
-  "version": "0.4.0",
+  "version": "0.1.0",
   "description": "Vue 3 binding for shipgraph — a reactive, SSR/Nuxt-safe <ShipGraph> component over @shipgraph/core. Public props/emits are engine-agnostic.",
   "license": "MIT",
   "type": "module",
@@ -14,7 +14,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {
@@ -27,10 +28,8 @@
     "perf": "node demo/perf.mjs"
   },
   "peerDependencies": {
+    "@shipgraph/core": "^0.1.0",
     "vue": "^3.3.0"
-  },
-  "dependencies": {
-    "@shipgraph/core": "workspace:*"
   },
   "devDependencies": {
     "@shipgraph/core": "*",
@@ -47,10 +46,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ship-With-AI/shipgraph.git",
+    "url": "git+https://github.com/Ship-With-AI/shipgraph.git",
     "directory": "packages/vue"
   },
+  "homepage": "https://github.com/Ship-With-AI/shipgraph/tree/main/packages/vue#readme",
+  "bugs": {
+    "url": "https://github.com/Ship-With-AI/shipgraph/issues"
+  },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   }
 }

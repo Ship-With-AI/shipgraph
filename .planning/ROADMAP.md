@@ -128,7 +128,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 07-01: Monorepo release pipeline + first publish
+- [~] 07-01: Monorepo release pipeline + first publish — **pipeline ready & dry-run-verified (2026-08-25); real `npm publish` pending operator go**
 
 ### Phase 8: StackMap Migration
 **Goal**: StackMap consumes shipgraph; old graph view removed.
@@ -156,5 +156,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. Feature-Parity Port | 2/2 | Complete | 2026-08-25 |
 | 5. React & Svelte Wrappers | 2/2 | Complete | 2026-08-25 |
 | 6. Docs & Demo Site | 1/1 | Complete | 2026-08-25 |
-| 7. npm Publish | 0/1 | Not started | - |
+| 7. npm Publish | 0/1 | Pipeline ready (publish gated) | - |
 | 8. StackMap Migration | 0/1 | Not started | - |
