@@ -1,0 +1,23 @@
+{
+  "name": "@shipgraph/docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "shipgraph docs + live demo site (VitePress). Install/quickstart/API for @shipgraph/core, /vue, /react, /svelte plus a live feel-bar demo on StackMap's real graph.json.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "@shipgraph/core": "workspace:*",
+    "@shipgraph/vue": "workspace:*"
+  },
+  "devDependencies": {
+    "@shipgraph/core": "*",
+    "@shipgraph/vue": "*",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.13"
+  }
+}

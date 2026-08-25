@@ -18,8 +18,8 @@ demo, then migrate StackMap onto it and delete the old Cytoscape view.
 - [x] **Phase 2: Core Architecture** - Framework-agnostic TS core + feel primitives
 - [x] **Phase 3: Vue Wrapper & Feel Polish** - Vue 3 binding + NVL-grade feel bar
 - [x] **Phase 4: Feature-Parity Port** - Filters, community focus, deep link, a11y
-- [ ] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
-- [ ] **Phase 6: Docs & Demo Site** - Install + 3 bindings, runnable examples
+- [x] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
+- [x] **Phase 6: Docs & Demo Site** - Install + 3 bindings, runnable examples
 - [ ] **Phase 7: npm Publish** - MIT package(s), CI, versioning
 - [ ] **Phase 8: StackMap Migration** - Replace GraphView.client.vue, remove old code
 
@@ -100,8 +100,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: React wrapper
-- [ ] 05-02: Svelte wrapper
+- [x] 05-01: React wrapper
+- [x] 05-02: Svelte wrapper
 
 ### Phase 6: Docs & Demo Site
 **Goal**: A docs/demo site covering install and all three bindings with runnable
@@ -115,7 +115,7 @@ examples on the real dataset.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: Docs site + live demo
+- [x] 06-01: Docs site + live demo
 
 ### Phase 7: npm Publish
 **Goal**: Publish MIT package(s) with CI and versioning.
@@ -154,7 +154,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Core Architecture | 2/2 | Complete | 2026-08-24 |
 | 3. Vue Wrapper & Feel Polish | 2/2 | Complete | 2026-08-24 |
 | 4. Feature-Parity Port | 2/2 | Complete | 2026-08-25 |
-| 5. React & Svelte Wrappers | 0/2 | Not started | - |
-| 6. Docs & Demo Site | 0/1 | Not started | - |
+| 5. React & Svelte Wrappers | 2/2 | Complete | 2026-08-25 |
+| 6. Docs & Demo Site | 1/1 | Complete | 2026-08-25 |
 | 7. npm Publish | 0/1 | Not started | - |
 | 8. StackMap Migration | 0/1 | Not started | - |

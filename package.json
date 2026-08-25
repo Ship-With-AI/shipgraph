@@ -5,10 +5,14 @@
   "description": "shipgraph — framework-agnostic, MIT graph visualization component. Monorepo root.",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "docs"
   ],
   "scripts": {
-    "build": "npm run build -w @shipgraph/core && npm run build -w @shipgraph/vue && npm run build -w @shipgraph/react && npm run build -w @shipgraph/svelte",
-    "test": "npm run test -w @shipgraph/core && npm run test -w @shipgraph/vue && npm run test -w @shipgraph/react && npm run test -w @shipgraph/svelte"
+    "build": "npm run build -w @shipgraph/core && npm run build -w @shipgraph/vue && npm run build -w @shipgraph/react && npm run build -w @shipgraph/svelte && npm run docs:build",
+    "test": "npm run test -w @shipgraph/core && npm run test -w @shipgraph/vue && npm run test -w @shipgraph/react && npm run test -w @shipgraph/svelte",
+    "docs:dev": "npm run dev -w @shipgraph/docs",
+    "docs:build": "npm run build -w @shipgraph/docs",
+    "docs:preview": "npm run preview -w @shipgraph/docs"
   }
 }

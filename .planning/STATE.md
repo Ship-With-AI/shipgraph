@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-08-24)
 
 **Core value:** NVL/Bloom-grade *feel* (springy physics, hover halos, eased focus
 camera) in an MIT, framework-agnostic component.
-**Current focus:** Phase 2 (Core Architecture) complete → Phase 3 (Vue Wrapper & Feel Polish) next.
+**Current focus:** Phase 6 (Docs & Demo Site) complete → Phase 7 (npm Publish) next.
 
 ## Milestone
 
@@ -21,9 +21,13 @@ with StackMap's graph, published to npm, StackMap migrated.
 | GSD setup | PROJECT.md, ROADMAP.md, REQUIREMENTS.md, config.json, STATE.md written |
 | Research | RESEARCH.md complete — decision: **wrap `force-graph` (MIT)** |
 | Spike | `spikes/` — runnable feel-bar on real graph.json + headless perf harness |
-| Phase 1 | Complete (2026-08-24) |
+| Phase 1 | Complete (2026-08-24) — research + scaffold + spike |
 | Phase 2 | Complete (2026-08-24) — `@shipgraph/core` (engine seam + adapter + feel primitives) |
-| Phase 3+ | Not started |
+| Phase 3 | Complete (2026-08-24) — `@shipgraph/vue` (reactive SSR-safe wrapper + feel polish) |
+| Phase 4 | Complete (2026-08-25) — edge filters, community focus, `?focus=` deep link, a11y |
+| Phase 5 | Complete (2026-08-25) — `@shipgraph/react` + `@shipgraph/svelte` thin bindings |
+| Phase 6 | Complete (2026-08-25) — `docs/` VitePress site: install/quickstart/API ×4 + live Vue feel-bar demo on real graph.json |
+| Phase 7+ | Not started |
 
 ## Key Decision (locked by spike evidence)
 
@@ -34,4 +38,4 @@ Cytoscape+fcose (flat feel). Measured: 60fps @1×, ~57fps settled interaction @5
 
 ## Next Action
 
-`/gsd-plan-phase 3` — Vue 3 wrapper (`@shipgraph/vue`) over the core + NVL feel polish.
+`/gsd-plan-phase 7` — npm publish: MIT package(s), CI, versioning (gated).
