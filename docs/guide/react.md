@@ -6,7 +6,7 @@ the core.
 ## Install
 
 ```sh
-npm i @shipgraph/react @shipgraph/core react react-dom
+pnpm add @shipgraph/react @shipgraph/core react react-dom
 ```
 
 ## Use

@@ -10,7 +10,7 @@ effect, so it never runs during server render.
 ## Install
 
 ```sh
-npm i @shipgraph/react @shipgraph/core react react-dom
+pnpm add @shipgraph/react @shipgraph/core react react-dom
 ```
 
 ## Usage
@@ -116,6 +116,6 @@ The graph is keyboard- and screen-reader-usable without a mouse:
 
 ## Scripts
 
-- `npm run build` — type-check (`tsc`) + bundle to ESM + `.d.ts`.
-- `npm test` — vitest + @testing-library/react component tests (mount, prop
+- `pnpm build` — type-check (`tsc`) + bundle to ESM + `.d.ts`.
+- `pnpm test` — vitest + @testing-library/react component tests (mount, prop
   reactivity, callbacks, parity features, a11y) under jsdom.

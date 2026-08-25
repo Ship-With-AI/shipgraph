@@ -20,7 +20,7 @@ demo, then migrate StackMap onto it and delete the old Cytoscape view.
 - [x] **Phase 4: Feature-Parity Port** - Filters, community focus, deep link, a11y
 - [x] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
 - [x] **Phase 6: Docs & Demo Site** - Install + 3 bindings, runnable examples
-- [ ] **Phase 7: npm Publish** - MIT package(s), CI, versioning
+- [ ] **Phase 7: Release Pipeline (pnpm + Turborepo)** - MIT packages, CI, versioning — pipeline ready, publish operator-gated
 - [ ] **Phase 8: StackMap Migration** - Replace GraphView.client.vue, remove old code
 
 ## Phase Details
@@ -117,18 +117,20 @@ examples on the real dataset.
 Plans:
 - [x] 06-01: Docs site + live demo
 
-### Phase 7: npm Publish
-**Goal**: Publish MIT package(s) with CI and versioning.
+### Phase 7: Release Pipeline (pnpm + Turborepo)
+**Goal**: Convert the monorepo to pnpm workspaces + Turborepo and land a complete
+release pipeline for the 4 MIT packages, verified end-to-end with a publish
+dry-run. Real publish + tag are operator-gated (not performed in this phase).
 **Depends on**: Phase 6
 **Requirements**: REQ-12
 **Success Criteria** (what must be TRUE):
-  1. `npm i @shipgraph/core` (+ vue/react/svelte) installs and works.
-  2. CI builds + type-checks + publishes on tag.
-  3. LICENSE (MIT) and README present.
+  1. `pnpm add @shipgraph/core` (+ vue/react/svelte) installs and works once published.
+  2. CI builds + type-checks + tests on PRs; release workflow publishes on tag `v*`.
+  3. LICENSE (MIT) and README present in every package tarball.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 07-01: Monorepo release pipeline + first publish
+- [x] 07-01: Monorepo release pipeline on pnpm + Turborepo (publish operator-gated)
 
 ### Phase 8: StackMap Migration
 **Goal**: StackMap consumes shipgraph; old graph view removed.
@@ -156,5 +158,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. Feature-Parity Port | 2/2 | Complete | 2026-08-25 |
 | 5. React & Svelte Wrappers | 2/2 | Complete | 2026-08-25 |
 | 6. Docs & Demo Site | 1/1 | Complete | 2026-08-25 |
-| 7. npm Publish | 0/1 | Not started | - |
+| 7. Release Pipeline (pnpm + Turborepo) | 1/1 | Pipeline ready — publish operator-gated | 2026-08-25 |
 | 8. StackMap Migration | 0/1 | Not started | - |

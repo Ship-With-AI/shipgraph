@@ -10,7 +10,7 @@ SSR-safe by construction — the Canvas 2D engine is loaded client-only inside
 ## Install
 
 ```sh
-npm i @shipgraph/svelte @shipgraph/core svelte
+pnpm add @shipgraph/svelte @shipgraph/core svelte
 ```
 
 ## Usage
@@ -97,7 +97,7 @@ The graph is keyboard- and screen-reader-usable without a mouse:
 
 ## Scripts
 
-- `npm run build` — type-check (`svelte-check`) + package to ESM + `.d.ts`
+- `pnpm build` — type-check (`svelte-check`) + package to ESM + `.d.ts`
   (`svelte-package`).
-- `npm test` — vitest + @testing-library/svelte component tests (mount, prop
+- `pnpm test` — vitest + @testing-library/svelte component tests (mount, prop
   reactivity, events, parity features, a11y) under jsdom.

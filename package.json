@@ -4,15 +4,18 @@
   "private": true,
   "description": "shipgraph — framework-agnostic, MIT graph visualization component. Monorepo root.",
   "license": "MIT",
-  "workspaces": [
-    "packages/*",
-    "docs"
-  ],
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "build": "npm run build -w @shipgraph/core && npm run build -w @shipgraph/vue && npm run build -w @shipgraph/react && npm run build -w @shipgraph/svelte && npm run docs:build",
-    "test": "npm run test -w @shipgraph/core && npm run test -w @shipgraph/vue && npm run test -w @shipgraph/react && npm run test -w @shipgraph/svelte",
-    "docs:dev": "npm run dev -w @shipgraph/docs",
-    "docs:build": "npm run build -w @shipgraph/docs",
-    "docs:preview": "npm run preview -w @shipgraph/docs"
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "dev": "turbo run dev",
+    "docs:dev": "turbo run dev --filter=@shipgraph/docs",
+    "docs:build": "turbo run build --filter=@shipgraph/docs",
+    "docs:preview": "pnpm --filter @shipgraph/docs preview"
+  },
+  "devDependencies": {
+    "turbo": "2.10.11"
   }
 }

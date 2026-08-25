@@ -5,7 +5,7 @@ A reactive, SSR/Nuxt-safe `<ShipGraph>` Vue 3 component over the core.
 ## Install
 
 ```sh
-npm i @shipgraph/vue @shipgraph/core vue
+pnpm add @shipgraph/vue @shipgraph/core vue
 ```
 
 ## Use

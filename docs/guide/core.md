@@ -6,7 +6,7 @@ primitive imperatively.
 ## Install
 
 ```sh
-npm i @shipgraph/core
+pnpm add @shipgraph/core
 ```
 
 ## Mount

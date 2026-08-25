@@ -11,7 +11,7 @@ Zero framework dependencies. Ships ESM + type declarations.
 ## Install
 
 ```sh
-npm i @shipgraph/core
+pnpm add @shipgraph/core
 ```
 
 ## Quick start
@@ -73,15 +73,15 @@ consumers can supply their own engine via `createGraphWithEngine`.
 ## Scripts
 
 ```sh
-npm run build       # tsc --noEmit (typecheck) + tsup (ESM bundle + .d.ts)
-npm test            # vitest unit tests (adapter + graph ops)
-npm run demo        # vite demo on real graph.json at http://localhost:5190
-npm run perf        # headless puppeteer perf harness -> demo/perf-results.json
+pnpm build       # tsc --noEmit (typecheck) + tsup (ESM bundle + .d.ts)
+pnpm test            # vitest unit tests (adapter + graph ops)
+pnpm demo        # vite demo on real graph.json at http://localhost:5190
+pnpm perf        # headless puppeteer perf harness -> demo/perf-results.json
 ```
 
 ## Performance
 
-Measured headless (Chrome 131, puppeteer, swiftshader) via `npm run perf` on
+Measured headless (Chrome 131, puppeteer, swiftshader) via `pnpm perf` on
 StackMap's real graph, driven entirely through the public API:
 
 | Scale | Nodes / Links | Settled + interacting |
