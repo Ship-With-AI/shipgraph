@@ -4,15 +4,19 @@ import { defineConfig } from 'vitepress';
 // Monorepo root (docs/.vitepress -> ../..).
 const repoRoot = resolve(__dirname, '../..');
 
+// Base path: project GitHub Pages serve under /<repo>/. The deploy workflow
+// sets DOCS_BASE=/shipgraph/; local dev + preview default to root.
+const base = process.env.DOCS_BASE || '/';
 // The live demo (and its @shipgraph/vue import) is served straight from the
 // TypeScript/SFC source of the workspace packages, so the docs exercise the
 // exact public surface a consumer sees — and `pnpm dev` needs no prior
 // package build. Same pattern the per-package demos use.
 export default defineConfig({
+  base,
   title: 'shipgraph',
   description:
     'NVL/Bloom-grade feel (springy physics, hover halos, eased focus camera) in an MIT, framework-agnostic graph visualization component. Core + Vue/React/Svelte bindings.',
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]],
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   lang: 'en-US',
   cleanUrls: true,
   themeConfig: {
