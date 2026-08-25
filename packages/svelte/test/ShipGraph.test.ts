@@ -22,6 +22,8 @@ const instance = {
   toggleRelation: vi.fn(),
   getHiddenRelations: vi.fn((): string[] => []),
   focusCommunity: vi.fn(),
+  select: vi.fn(),
+  getSelected: vi.fn((): string | null => null),
   on: vi.fn((event: string, fn: (p: unknown) => void) => {
     handlers.set(event, fn);
     return () => handlers.delete(event);
@@ -99,6 +101,18 @@ describe('<ShipGraph>', () => {
     await waitFor(() => expect(instance.setDraggable).toHaveBeenCalledWith(false));
   });
 
+  it('reacts to `selected` prop and relays the select event to onSelect', async () => {
+    const onSelect = vi.fn();
+    const { rerender } = render(ShipGraph, { props: { data, onSelect } });
+    await ready();
+    await rerender({ data, onSelect, selected: 'a' });
+    await waitFor(() => expect(instance.select).toHaveBeenCalledWith('a'));
+    handlers.get('select')?.('a');
+    handlers.get('select')?.(null);
+    expect(onSelect).toHaveBeenNthCalledWith(1, 'a');
+    expect(onSelect).toHaveBeenNthCalledWith(2, null);
+  });
+
   it('relays node/hover/focus core events to callbacks', async () => {
     const onNode = vi.fn();
     const onHover = vi.fn();
@@ -133,7 +147,7 @@ describe('<ShipGraph>', () => {
   it('destroys the core instance and unsubscribes on unmount', async () => {
     const { unmount } = render(ShipGraph, { props: { data } });
     await ready();
-    await waitFor(() => expect(handlers.size).toBe(4));
+    await waitFor(() => expect(handlers.size).toBe(5));
     unmount();
     expect(instance.destroy).toHaveBeenCalledTimes(1);
     expect(handlers.size).toBe(0);

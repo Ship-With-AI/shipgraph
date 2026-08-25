@@ -30,6 +30,8 @@ const props = withDefaults(
     hiddenRelations?: string[] | null;
     /** Node id to ease the camera to. Reactive. */
     focus?: string | null;
+    /** Persistently selected node id (null clears). Reactive. */
+    selected?: string | null;
     /** Community/family to isolate + highlight (dims the rest). Reactive. */
     focusCommunity?: number | null;
     /** Honor prefers-reduced-motion path. Reactive. */
@@ -49,6 +51,7 @@ const props = withDefaults(
     filters: null,
     hiddenRelations: null,
     focus: null,
+    selected: null,
     focusCommunity: null,
     reducedMotion: undefined,
     draggable: undefined,
@@ -68,6 +71,8 @@ const emit = defineEmits<{
   (e: 'hover', id: string | null): void;
   /** A node was focused (camera easing began). */
   (e: 'focus', id: string): void;
+  /** The persistent selection changed (null clears). */
+  (e: 'select', id: string | null): void;
   /** The core instance is mounted and ready. */
   (e: 'ready', graph: ShipGraphInstance): void;
 }>();
@@ -180,12 +185,14 @@ onMounted(async () => {
   // Deep link takes effect only when no explicit focus prop was supplied.
   const initialFocus = props.focus ?? (props.deepLink ? readDeepLinkFocus() : null);
   if (initialFocus) g.focus(initialFocus);
+  if (props.selected != null) g.select(props.selected);
 
   unsubscribers.push(
     g.on('click', (id) => emit('node', id)),
     g.on('linkclick', (link) => emit('link', link)),
     g.on('hover', (id) => emit('hover', id)),
     g.on('focus', (id) => emit('focus', id)),
+    g.on('select', (id) => emit('select', id)),
   );
 
   emit('ready', g);
@@ -210,6 +217,10 @@ watch(
   (id) => {
     if (id) graph.value?.focus(id);
   },
+);
+watch(
+  () => props.selected,
+  (id) => graph.value?.select(id ?? null),
 );
 watch(
   () => props.focusCommunity,

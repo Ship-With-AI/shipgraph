@@ -81,6 +81,8 @@ export interface GraphEngine {
 
   onNodeHover(cb: (id: string | null) => void): void;
   onNodeClick(cb: (id: string) => void): void;
+  /** Fires when the empty canvas background is clicked (not a node/link). */
+  onBackgroundClick(cb: () => void): void;
   onNodeDrag(cb: (id: string) => void): void;
   onNodeDragEnd(cb: (id: string) => void): void;
   onLinkHover(cb: (link: GraphLink | null) => void): void;

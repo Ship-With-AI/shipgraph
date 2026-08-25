@@ -63,11 +63,14 @@ class ShipGraphImpl implements ShipGraph {
 
   private hoverNode: string | null = null;
   private hoverSet = new Set<string>();
+  private selectedNode: string | null = null;
+  private selectedSet = new Set<string>();
   private reduceMotion: boolean;
 
   private readonly listeners: { [E in ShipGraphEvent]: Set<(p: ShipGraphEventMap[E]) => void> } = {
     hover: new Set(),
     click: new Set(),
+    select: new Set(),
     linkhover: new Set(),
     linkclick: new Set(),
     focus: new Set(),
@@ -100,10 +103,13 @@ class ShipGraphImpl implements ShipGraph {
     this.wireInteraction();
     this.applyPhysics();
     this.engine.setDraggable(this.opts.draggable);
-    // When created in reduced motion, keep the render loop alive (see
-    // setReducedMotion) so interaction stays live once the layout settles —
-    // but DON'T stop the engine here: the initial layout must still compute.
-    if (this.reduceMotion) this.engine.setAutoPauseRedraw(false);
+    // Keep the render loop alive for the graph's whole life. force-graph pauses
+    // redraw once the layout settles (autoPauseRedraw), and its pointer handler
+    // never wakes it — so a settled graph stops refreshing the shadow hit-test
+    // canvas, killing hover/click/selection until reload. Disabling auto-pause
+    // keeps interaction responsive at any time (and covers reduced motion,
+    // which settles instantly).
+    this.engine.setAutoPauseRedraw(false);
   }
 
   // --- setup ----------------------------------------------------------------
@@ -121,20 +127,27 @@ class ShipGraphImpl implements ShipGraph {
   private wireStyling(): void {
     this.engine.setNodeRenderer((n: RenderNode, ctx, scale) => {
       const r = (1 + Math.sqrt(n.degree)) * 1.6;
+      // Transient hover takes priority; otherwise the persistent selection
+      // drives the 1-hop emphasis. Either way a focal node + its neighbors stay
+      // lit and the rest are dimmed.
       const hoverActive = this.hoverNode !== null;
-      const inHalo = this.hoverSet.has(n.id);
+      const focusNode = hoverActive ? this.hoverNode : this.selectedNode;
+      const focusSet = hoverActive ? this.hoverSet : this.selectedSet;
+      const focusActive = focusNode !== null;
+      const inFocus = focusActive && focusSet.has(n.id);
       const community = this.highlightSet;
       const isMember = community !== null && community.has(n.id);
       const commDim = community !== null && !isMember;
-      const dim = (hoverActive && !inHalo) || commDim;
-      if (hoverActive && inHalo) {
+      const dim = (focusActive && !inFocus) || commDim;
+      // 1-hop halo for the focal set (hover or selection).
+      if (focusActive && inFocus) {
         ctx.beginPath();
         ctx.arc(n.x, n.y, r + 6, 0, 2 * Math.PI);
-        ctx.fillStyle = n.id === this.hoverNode ? 'rgba(110,231,183,.28)' : 'rgba(110,231,183,.14)';
+        ctx.fillStyle = n.id === focusNode ? 'rgba(110,231,183,.28)' : 'rgba(110,231,183,.14)';
         ctx.fill();
       }
-      // Community focus ring: emphasize members even without a hover.
-      if (isMember && !hoverActive) {
+      // Community focus ring: emphasize members even without a hover/selection.
+      if (isMember && !focusActive) {
         ctx.beginPath();
         ctx.arc(n.x, n.y, r + 5, 0, 2 * Math.PI);
         ctx.fillStyle = 'rgba(110,231,183,.16)';
@@ -144,23 +157,32 @@ class ShipGraphImpl implements ShipGraph {
       ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
       ctx.fillStyle = dim ? 'rgba(90,105,120,.25)' : communityColor(n.community);
       ctx.fill();
-      if (n.id === this.hoverNode || (isMember && !hoverActive)) {
+      if (n.id === focusNode || (isMember && !focusActive)) {
         ctx.lineWidth = 1.5 / scale;
-        ctx.strokeStyle = n.id === this.hoverNode ? '#eafff5' : 'rgba(110,231,183,.9)';
+        ctx.strokeStyle = n.id === focusNode ? '#eafff5' : 'rgba(110,231,183,.9)';
         ctx.stroke();
       }
-      if (scale > 2 && !dim) {
+      // Persistent selection ring: always mark the selected node, even while
+      // hovering elsewhere, so the selection is never visually lost.
+      if (n.id === this.selectedNode) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r + 3.5, 0, 2 * Math.PI);
+        ctx.lineWidth = 2 / scale;
+        ctx.strokeStyle = '#eafff5';
+        ctx.stroke();
+      }
+      if ((scale > 2 && !dim) || n.id === this.selectedNode) {
         ctx.font = `${11 / scale}px ui-sans-serif, sans-serif`;
         ctx.fillStyle = 'rgba(230,237,243,.85)';
         ctx.fillText(n.label, n.x + r + 2, n.y + 3 / scale);
       }
     });
 
+    // Links follow the same focal set (hover, else selection), then community.
     this.engine.setLinkColor((_l, s, t) => {
-      if (this.hoverNode) {
-        return this.hoverSet.has(s) && this.hoverSet.has(t)
-          ? 'rgba(110,231,183,.9)'
-          : 'rgba(120,140,160,.06)';
+      const set = this.hoverNode ? this.hoverSet : this.selectedNode ? this.selectedSet : null;
+      if (set) {
+        return set.has(s) && set.has(t) ? 'rgba(110,231,183,.9)' : 'rgba(120,140,160,.06)';
       }
       if (this.highlightSet) {
         return this.highlightSet.has(s) && this.highlightSet.has(t)
@@ -170,8 +192,9 @@ class ShipGraphImpl implements ShipGraph {
       return 'rgba(120,140,160,.22)';
     });
     this.engine.setLinkWidth((_l, s, t) => {
-      if (this.hoverNode) {
-        return this.hoverSet.has(s) && this.hoverSet.has(t) ? 2.5 : 0.5;
+      const set = this.hoverNode ? this.hoverSet : this.selectedNode ? this.selectedSet : null;
+      if (set) {
+        return set.has(s) && set.has(t) ? 2.5 : 0.5;
       }
       if (this.highlightSet) {
         return this.highlightSet.has(s) && this.highlightSet.has(t) ? 2 : 0.5;
@@ -187,9 +210,13 @@ class ShipGraphImpl implements ShipGraph {
       this.emit('hover', id);
     });
     this.engine.onNodeClick((id) => {
+      // Clicking a node makes it the persistent selection AND eases the camera
+      // to it. Clicking a neighbor carries the exploration to that node.
+      this.select(id);
       this.focus(id);
       this.emit('click', id);
     });
+    this.engine.onBackgroundClick(() => this.select(null));
     this.engine.onLinkHover((link) => this.emit('linkhover', link));
     this.engine.onLinkClick((link) => this.emit('linkclick', link));
     // Spring-back drag: pin while dragging; on release, unpin + reheat so the
@@ -251,6 +278,8 @@ class ShipGraphImpl implements ShipGraph {
     this.highlightSet = null;
     this.hoverNode = null;
     this.hoverSet = new Set();
+    this.selectedNode = null;
+    this.selectedSet = new Set();
     this.rebuild();
   }
 
@@ -336,6 +365,27 @@ class ShipGraphImpl implements ShipGraph {
     this.engine.refresh();
   }
 
+  select(nodeId: string | null): void {
+    if (nodeId === null) {
+      if (this.selectedNode === null) return;
+      this.selectedNode = null;
+      this.selectedSet = new Set();
+      this.engine.refresh();
+      this.emit('select', null);
+      return;
+    }
+    this.selectedNode = nodeId;
+    const set = new Set<string>([nodeId]);
+    for (const nb of this.adj.get(nodeId) ?? []) set.add(nb);
+    this.selectedSet = set;
+    this.engine.refresh();
+    this.emit('select', nodeId);
+  }
+
+  getSelected(): string | null {
+    return this.selectedNode;
+  }
+
   collapse(nodeId: string): void {
     const targets = collapseTargets(nodeId, this.adj, this.visibleIds());
     if (!targets.length) {
@@ -373,13 +423,9 @@ class ShipGraphImpl implements ShipGraph {
 
   setReducedMotion(on: boolean): void {
     this.reduceMotion = on;
-    // Keep the canvas repainting while reduced motion is on: force-graph's
-    // autoPauseRedraw stops repaints once the engine settles, which — combined
-    // with the instant (0-tick) settle below — would freeze the hover halo,
-    // community highlight and spring-back drag until a reload. Disabling it
-    // keeps interaction live; re-enabling restores the idle-perf pause.
-    this.engine.setAutoPauseRedraw(!on);
     // Reduced motion settles the layout immediately and drops camera easing.
+    // (autoPauseRedraw stays off for the graph's whole life — see the
+    // constructor — so interaction keeps working after this instant settle.)
     this.engine.setCooldownTicks(on ? 0 : Infinity);
     this.engine.reheat();
   }

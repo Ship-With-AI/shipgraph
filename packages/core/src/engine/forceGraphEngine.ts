@@ -205,6 +205,10 @@ export class ForceGraphEngine implements GraphEngine {
     this.inst().onNodeClick((n) => cb(String(n.id)));
   }
 
+  onBackgroundClick(cb: () => void): void {
+    this.inst().onBackgroundClick(() => cb());
+  }
+
   onNodeDrag(cb: (id: string) => void): void {
     this.inst().onNodeDrag((n) => cb(String(n.id)));
   }
