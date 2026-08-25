@@ -129,6 +129,10 @@ export class ForceGraphEngine implements GraphEngine {
     this.inst().cooldownTicks(ticks);
   }
 
+  setAutoPauseRedraw(on: boolean): void {
+    this.inst().autoPauseRedraw(on);
+  }
+
   centerAt(x: number, y: number, ms: number): void {
     this.inst().centerAt(x, y, ms);
   }

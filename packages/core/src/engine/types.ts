@@ -53,6 +53,13 @@ export interface GraphEngine {
   reheat(): void;
   /** Number of cooldown ticks (0 = settle immediately, Infinity = never). */
   setCooldownTicks(ticks: number): void;
+  /**
+   * Control the engine's redraw auto-pause. When enabled (default) the engine
+   * stops repainting once the layout settles, to save CPU. Reduced motion must
+   * disable it so hover/highlight/drag keep repainting after the simulation has
+   * stopped.
+   */
+  setAutoPauseRedraw(on: boolean): void;
 
   centerAt(x: number, y: number, ms: number): void;
   zoom(k: number, ms: number): void;
