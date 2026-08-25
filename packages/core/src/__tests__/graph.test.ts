@@ -20,6 +20,9 @@ import type { GraphData, GraphLink, RawGraph } from '../types';
 class FakeEngine implements GraphEngine {
   lastData: GraphData = { nodes: [], links: [] };
   nodeRenderer: NodeRenderer | null = null;
+  autoPauseRedraw = true;
+  cooldownTicks: number | null = null;
+  reheatCount = 0;
 
   mount(): void {}
   setData(data: GraphData): void {
@@ -29,8 +32,15 @@ class FakeEngine implements GraphEngine {
     return this.lastData;
   }
   configurePhysics(_p: EnginePhysics): void {}
-  reheat(): void {}
-  setCooldownTicks(_ticks: number): void {}
+  reheat(): void {
+    this.reheatCount++;
+  }
+  setCooldownTicks(ticks: number): void {
+    this.cooldownTicks = ticks;
+  }
+  setAutoPauseRedraw(on: boolean): void {
+    this.autoPauseRedraw = on;
+  }
   centerAt(_x: number, _y: number, _ms: number): void {}
   zoom(_k: number, _ms: number): void {}
   getZoom(): number {
@@ -147,5 +157,35 @@ describe('community / family focus (focusCommunity)', () => {
     g.setData(raw);
     expect(g.getFocusedCommunity()).toBeNull();
     expect(g.getHighlightedNodes()).toEqual([]);
+  });
+});
+
+describe('reduced motion (setReducedMotion) — keeps the render loop alive', () => {
+  it('disables autoPauseRedraw when enabled so interaction still repaints', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    expect(engine.autoPauseRedraw).toBe(true); // default: idle perf pause
+
+    g.setReducedMotion(true);
+    // Instant settle, but repaint must stay live (else halo/highlight/drag freeze).
+    expect(engine.autoPauseRedraw).toBe(false);
+    expect(engine.cooldownTicks).toBe(0);
+  });
+
+  it('restores the perf pause and keeps the engine running when disabled', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    g.setReducedMotion(true);
+    g.setReducedMotion(false);
+    expect(engine.autoPauseRedraw).toBe(true);
+    expect(engine.cooldownTicks).toBe(Infinity);
+  });
+
+  it('keeps repaint alive on construction when reduced, without freezing layout', () => {
+    const e = new FakeEngine();
+    createGraphWithEngine(container, e, raw, { reducedMotion: true });
+    // Repaint stays live so interaction works once settled...
+    expect(e.autoPauseRedraw).toBe(false);
+    // ...but the engine is NOT stopped at construction: the initial layout
+    // must still compute (cooldownTicks left at the engine default).
+    expect(e.cooldownTicks).toBeNull();
   });
 });

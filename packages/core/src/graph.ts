@@ -100,6 +100,10 @@ class ShipGraphImpl implements ShipGraph {
     this.wireInteraction();
     this.applyPhysics();
     this.engine.setDraggable(this.opts.draggable);
+    // When created in reduced motion, keep the render loop alive (see
+    // setReducedMotion) so interaction stays live once the layout settles —
+    // but DON'T stop the engine here: the initial layout must still compute.
+    if (this.reduceMotion) this.engine.setAutoPauseRedraw(false);
   }
 
   // --- setup ----------------------------------------------------------------
@@ -369,6 +373,12 @@ class ShipGraphImpl implements ShipGraph {
 
   setReducedMotion(on: boolean): void {
     this.reduceMotion = on;
+    // Keep the canvas repainting while reduced motion is on: force-graph's
+    // autoPauseRedraw stops repaints once the engine settles, which — combined
+    // with the instant (0-tick) settle below — would freeze the hover halo,
+    // community highlight and spring-back drag until a reload. Disabling it
+    // keeps interaction live; re-enabling restores the idle-perf pause.
+    this.engine.setAutoPauseRedraw(!on);
     // Reduced motion settles the layout immediately and drops camera easing.
     this.engine.setCooldownTicks(on ? 0 : Infinity);
     this.engine.reheat();
