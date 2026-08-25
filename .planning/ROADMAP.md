@@ -17,7 +17,7 @@ demo, then migrate StackMap onto it and delete the old Cytoscape view.
 - [x] **Phase 1: Research & Spike** - Build-vs-wrap decision, proven on real data
 - [x] **Phase 2: Core Architecture** - Framework-agnostic TS core + feel primitives
 - [x] **Phase 3: Vue Wrapper & Feel Polish** - Vue 3 binding + NVL-grade feel bar
-- [ ] **Phase 4: Feature-Parity Port** - Filters, community focus, deep link, a11y
+- [x] **Phase 4: Feature-Parity Port** - Filters, community focus, deep link, a11y
 - [ ] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
 - [ ] **Phase 6: Docs & Demo Site** - Install + 3 bindings, runnable examples
 - [ ] **Phase 7: npm Publish** - MIT package(s), CI, versioning
@@ -86,8 +86,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Edge-type filters + community focus
-- [ ] 04-02: `?focus=` deep link + keyboard/SR a11y list fallback
+- [x] 04-01: Edge-type filters + community focus
+- [x] 04-02: `?focus=` deep link + keyboard/SR a11y list fallback
 
 ### Phase 5: React & Svelte Wrappers
 **Goal**: `@shipgraph/react` and `@shipgraph/svelte` — same core, thin bindings.
@@ -153,7 +153,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 1. Research & Spike | 1/1 | Complete | 2026-08-24 |
 | 2. Core Architecture | 2/2 | Complete | 2026-08-24 |
 | 3. Vue Wrapper & Feel Polish | 2/2 | Complete | 2026-08-24 |
-| 4. Feature-Parity Port | 0/2 | Not started | - |
+| 4. Feature-Parity Port | 2/2 | Complete | 2026-08-25 |
 | 5. React & Svelte Wrappers | 0/2 | Not started | - |
 | 6. Docs & Demo Site | 0/1 | Not started | - |
 | 7. npm Publish | 0/1 | Not started | - |

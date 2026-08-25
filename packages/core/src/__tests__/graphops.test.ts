@@ -3,6 +3,7 @@ import {
   applyView,
   buildAdjacency,
   collapseTargets,
+  communityMembers,
   endpointId,
   relationsOf,
 } from '../graphops';
@@ -67,6 +68,31 @@ describe('applyView (filters)', () => {
     expect(view.nodes.map((n) => n.id)).not.toContain('E');
     expect(view.links.some((l) => l.source === 'E' || l.target === 'E')).toBe(false);
     expect(view.links).toHaveLength(3);
+  });
+
+  it('drops links of hidden relation classes (independent of inclusion)', () => {
+    // Hide `references`: the two references links go, the two `cites` links stay.
+    const view = applyView(data, null, new Set(), new Set(['references']));
+    expect(view.links.every((l) => l.relation !== 'references')).toBe(true);
+    expect(view.links.map((l) => l.relation).sort()).toEqual(['cites', 'cites']);
+  });
+
+  it('combines inclusion filter and hidden relations', () => {
+    // Keep only `references`, but also hide `references` -> nothing remains.
+    const view = applyView(data, ['references'], new Set(), new Set(['references']));
+    expect(view.links).toHaveLength(0);
+  });
+});
+
+describe('communityMembers', () => {
+  it('returns the node ids in a given community', () => {
+    expect(communityMembers(data, 0).sort()).toEqual(['A', 'B']);
+    expect(communityMembers(data, 1).sort()).toEqual(['C', 'D']);
+    expect(communityMembers(data, 2)).toEqual(['E']);
+  });
+
+  it('returns an empty list for an absent community', () => {
+    expect(communityMembers(data, 99)).toEqual([]);
   });
 });
 

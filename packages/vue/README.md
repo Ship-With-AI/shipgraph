@@ -55,10 +55,15 @@ the server render entirely:
 | Prop            | Type                          | Default | Notes                                        |
 | --------------- | ----------------------------- | ------- | -------------------------------------------- |
 | `data`          | `RawGraph \| GraphData`       | —       | Raw `graph.json` or canonical data. Required. |
-| `filters`       | `string[] \| null`            | `null`  | Active relation classes; null/empty = all.    |
+| `filters`       | `string[] \| null`            | `null`  | Active relation classes (inclusion); null/empty = all. |
+| `hiddenRelations` | `string[] \| null`          | `null`  | Relation classes hidden live (exclusion toggle). |
 | `focus`         | `string \| null`              | `null`  | Node id to ease the camera to.                |
+| `focusCommunity` | `number \| null`             | `null`  | Community/family to isolate + highlight (dims the rest). |
 | `reducedMotion` | `boolean`                     | —       | Force the prefers-reduced-motion path.        |
 | `draggable`     | `boolean`                     | —       | Node dragging with spring-back.               |
+| `deepLink`      | `boolean`                     | `true`  | Read the deep-link query param on mount (client-only). |
+| `deepLinkParam` | `string`                      | `focus` | Query param name for the deep link.           |
+| `ariaLabel`     | `string`                      | `Interactive graph visualization` | Accessible label for the graph region. |
 | `options`       | `ShipGraphOptions`            | —       | One-time construction options (not reactive). |
 
 ## Emits
@@ -76,6 +81,34 @@ the server render entirely:
 Everything the core provides, driven through the component: physics elasticity,
 1-hop hover halo, eased focus/zoom, expand/collapse, spring-back drag, and the
 `prefers-reduced-motion` path.
+
+## Deep links (`?focus=<slug>`)
+
+On mount (client-only, SSR-safe) the component reads `?focus=<node-id>` from the
+URL and centers + focuses that node — so a graph can be shared pre-focused. The
+param name is configurable via `deepLinkParam`, and an explicit `focus` prop
+always wins over the URL. Set `deepLink="false"` to opt out.
+
+## Accessibility
+
+The graph is keyboard- and screen-reader-usable without a mouse:
+
+- The canvas region is focusable (`tabindex=0`, `role="application"`). Arrow
+  keys traverse nodes, `Home`/`End` jump to first/last, and `Enter` focuses the
+  current node — each move eases the camera to that node.
+- A visually-hidden `<ul>` renders one accessible entry per node (an ARIA-labeled
+  list). Activating an entry focuses its node. An `aria-live` region announces
+  the focused node for screen readers.
+
+## Imperative methods (via template ref)
+
+```ts
+const el = ref<InstanceType<typeof ShipGraph>>();
+el.value?.focusNode('repos_langgraph');
+el.value?.toggleRelation('references');     // hide/show a relation class
+el.value?.focusCommunity(3);                // isolate + highlight a community
+el.value?.graph;                            // the live core instance (fit(), etc.)
+```
 
 ## Scripts
 

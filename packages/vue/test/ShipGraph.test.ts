@@ -19,6 +19,9 @@ const instance = {
   reheat: vi.fn(),
   destroy: vi.fn(),
   getData: vi.fn(() => ({ nodes: [], links: [] })),
+  toggleRelation: vi.fn(),
+  getHiddenRelations: vi.fn((): string[] => []),
+  focusCommunity: vi.fn(),
   on: vi.fn((event: string, fn: (p: unknown) => void) => {
     handlers.set(event, fn);
     return () => handlers.delete(event);
@@ -124,5 +127,129 @@ describe('<ShipGraph>', () => {
     w.unmount();
     expect(instance.destroy).toHaveBeenCalledTimes(1);
     expect(handlers.size).toBe(0);
+  });
+});
+
+describe('<ShipGraph> parity: edge filters + community focus', () => {
+  it('applies hiddenRelations on mount and reconciles on change', async () => {
+    const w = mount(ShipGraph, { props: { data, hiddenRelations: ['references'] } });
+    await flushPromises();
+    // Mount: want {references}, have {} -> hide references.
+    expect(instance.toggleRelation).toHaveBeenCalledWith('references', false);
+
+    // Now the core reports references as hidden; switching to a different set
+    // must show references again and hide the new one.
+    instance.getHiddenRelations.mockReturnValue(['references']);
+    await w.setProps({ hiddenRelations: ['similar_to'] });
+    expect(instance.toggleRelation).toHaveBeenCalledWith('references', true);
+    expect(instance.toggleRelation).toHaveBeenCalledWith('similar_to', false);
+  });
+
+  it('reacts to focusCommunity prop changes', async () => {
+    const w = mount(ShipGraph, { props: { data, focusCommunity: 1 } });
+    await flushPromises();
+    expect(instance.focusCommunity).toHaveBeenCalledWith(1);
+    await w.setProps({ focusCommunity: null });
+    expect(instance.focusCommunity).toHaveBeenLastCalledWith(null);
+  });
+
+  it('exposes imperative toggleRelation/focusCommunity/focusNode', async () => {
+    const w = mount(ShipGraph, { props: { data } });
+    await flushPromises();
+    const exposed = w.vm as unknown as {
+      toggleRelation: (r: string, v?: boolean) => void;
+      focusCommunity: (c: number | null) => void;
+      focusNode: (id: string) => void;
+    };
+    exposed.toggleRelation('references', false);
+    exposed.focusCommunity(2);
+    exposed.focusNode('a');
+    expect(instance.toggleRelation).toHaveBeenCalledWith('references', false);
+    expect(instance.focusCommunity).toHaveBeenCalledWith(2);
+    expect(instance.focus).toHaveBeenCalledWith('a');
+  });
+});
+
+describe('<ShipGraph> deep link (?focus=)', () => {
+  const setSearch = (search: string) => {
+    window.history.replaceState({}, '', search ? `/?${search}` : '/');
+  };
+
+  beforeEach(() => setSearch(''));
+
+  it('focuses the node named by ?focus= on mount (client-only)', async () => {
+    setSearch('focus=b');
+    mount(ShipGraph, { props: { data } });
+    await flushPromises();
+    expect(instance.focus).toHaveBeenCalledWith('b');
+  });
+
+  it('honors a custom deepLinkParam', async () => {
+    setSearch('node=c');
+    mount(ShipGraph, { props: { data, deepLinkParam: 'node' } });
+    await flushPromises();
+    expect(instance.focus).toHaveBeenCalledWith('c');
+  });
+
+  it('no-ops when the query param is absent', async () => {
+    mount(ShipGraph, { props: { data } });
+    await flushPromises();
+    expect(instance.focus).not.toHaveBeenCalled();
+  });
+
+  it('is disabled by deepLink=false', async () => {
+    setSearch('focus=b');
+    mount(ShipGraph, { props: { data, deepLink: false } });
+    await flushPromises();
+    expect(instance.focus).not.toHaveBeenCalled();
+  });
+
+  it('an explicit focus prop wins over the deep link', async () => {
+    setSearch('focus=b');
+    mount(ShipGraph, { props: { data, focus: 'a' } });
+    await flushPromises();
+    expect(instance.focus).toHaveBeenCalledWith('a');
+    expect(instance.focus).not.toHaveBeenCalledWith('b');
+  });
+});
+
+describe('<ShipGraph> accessibility (keyboard + SR list)', () => {
+  const a11yData = {
+    nodes: [
+      { id: 'a', label: 'Alpha' },
+      { id: 'b', label: 'Bravo' },
+      { id: 'c', label: 'Charlie' },
+    ],
+    links: [],
+  };
+
+  it('renders one accessible list entry per node', async () => {
+    const w = mount(ShipGraph, { props: { data: a11yData } });
+    await flushPromises();
+    const items = w.findAll('.shipgraph-node-list li');
+    expect(items).toHaveLength(3);
+    expect(items.map((li) => li.text())).toEqual(['Alpha', 'Bravo', 'Charlie']);
+  });
+
+  it('wires keyboard traversal: ArrowDown focuses the next node', async () => {
+    const w = mount(ShipGraph, { props: { data: a11yData } });
+    await flushPromises();
+    const region = w.find('.shipgraph');
+    // Region is keyboard-focusable and marked as an application widget.
+    expect(region.attributes('tabindex')).toBe('0');
+    expect(region.attributes('role')).toBe('application');
+    await region.trigger('keydown', { key: 'ArrowDown' });
+    expect(instance.focus).toHaveBeenCalledWith('a');
+    await region.trigger('keydown', { key: 'ArrowDown' });
+    expect(instance.focus).toHaveBeenLastCalledWith('b');
+    await region.trigger('keydown', { key: 'ArrowUp' });
+    expect(instance.focus).toHaveBeenLastCalledWith('a');
+  });
+
+  it('activating a list entry focuses that node', async () => {
+    const w = mount(ShipGraph, { props: { data: a11yData } });
+    await flushPromises();
+    await w.findAll('.shipgraph-node-list button')[2].trigger('click');
+    expect(instance.focus).toHaveBeenCalledWith('c');
   });
 });

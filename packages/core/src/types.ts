@@ -138,6 +138,26 @@ export interface ShipGraph {
   setFilters(relations: string[] | null): void;
   /** All relation classes present in the full dataset (sorted). */
   getRelations(): string[];
+  /**
+   * Toggle visibility of a relation class live (hide/show its links). When
+   * `visible` is omitted the current state is flipped. Independent of
+   * `setFilters`: a relation hidden here stays hidden regardless of the
+   * inclusion filter.
+   */
+  toggleRelation(relation: string, visible?: boolean): void;
+  /** Relation classes currently hidden by `toggleRelation` (sorted). */
+  getHiddenRelations(): string[];
+  /**
+   * Isolate + highlight a community ("family"): its members are emphasized and
+   * every other node/link is dimmed. Pass null to clear the focus.
+   */
+  focusCommunity(community: number | null): void;
+  /** The community currently focused, or null. */
+  getFocusedCommunity(): number | null;
+  /** Node ids highlighted by the active community focus (empty when none). */
+  getHighlightedNodes(): string[];
+  /** True when a community focus is active and this node is not a member. */
+  isDimmed(nodeId: string): boolean;
   /** Programmatically drive the 1-hop hover halo (null clears it). */
   hoverHalo(nodeId: string | null): void;
   /** Hide neighbors that hang solely off this node. */

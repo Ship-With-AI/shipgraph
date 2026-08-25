@@ -27,7 +27,9 @@ const graph = createGraph(document.getElementById('graph')!, rawGraphJson, {
 
 graph.on('hover', (id) => console.log('hovering', id));
 graph.focus('repos_langgraph');       // eased center + zoom
-graph.setFilters(['references']);      // live edge-type filter
+graph.setFilters(['references']);      // live edge-type filter (inclusion)
+graph.toggleRelation('references');    // hide/show a relation class live
+graph.focusCommunity(3);               // isolate + highlight a community, dim rest
 graph.collapse('repos_langgraph');     // hide leaf neighbors
 graph.setReducedMotion(true);          // drop easing / bounce
 ```
@@ -40,11 +42,13 @@ graph.setReducedMotion(true);          // drop easing / bounce
 | --- | --- |
 | `focus(id)` | eased click-to-focus camera (`focusTransitionMs`, `focusZoom`) |
 | `hoverHalo(id \| null)` | 1-hop neighborhood halo (neighbors highlighted, rest dimmed) |
-| `setFilters(relations \| null)` | live relation-class filtering |
+| `setFilters(relations \| null)` | live relation-class filtering (inclusion) |
+| `toggleRelation(relation, visible?)` | hide/show a relation class live (exclusion toggle) |
+| `focusCommunity(community \| null)` | isolate + highlight a community/family, dim the rest |
 | `collapse(id)` / `expand(id)` | hide/restore leaf neighbors |
 | `setDraggable(on)` | spring-back drag (pin while dragging, reheat on release) |
 | `setReducedMotion(on)` | `prefers-reduced-motion` path (0ms easing, instant settle) |
-| `fit(ms?)`, `reheat()`, `setData()`, `getData()`, `getFullData()`, `getRelations()` | — |
+| `fit(ms?)`, `reheat()`, `setData()`, `getData()`, `getFullData()`, `getRelations()`, `getHiddenRelations()`, `getFocusedCommunity()`, `getHighlightedNodes()`, `isDimmed(id)` | — |
 | `on(event, cb)` | `hover` · `click` · `dragend` · `settle` · `frame` |
 
 Physics ("elasticity") is tuned via `options.physics`: firm charge repulsion +

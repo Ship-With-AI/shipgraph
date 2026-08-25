@@ -1,6 +1,6 @@
 {
   "name": "@shipgraph/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Framework-agnostic graph visualization core — engine seam + data adapter + NVL-grade feel primitives, wrapping force-graph (Canvas 2D + d3-force) behind a shipgraph-owned API.",
   "license": "MIT",
   "type": "module",
@@ -30,6 +30,7 @@
     "force-graph": "^1.49.5"
   },
   "devDependencies": {
+    "jsdom": "^25.0.1",
     "puppeteer": "^23.11.1",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",

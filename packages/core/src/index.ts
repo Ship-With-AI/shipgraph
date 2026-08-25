@@ -5,7 +5,7 @@
 
 export { createGraph, createGraphWithEngine } from './graph';
 export { adapt, toGraphData, isGraphData } from './adapter';
-export { buildAdjacency, applyView, collapseTargets, relationsOf, endpointId } from './graphops';
+export { buildAdjacency, applyView, collapseTargets, communityMembers, relationsOf, endpointId } from './graphops';
 
 export type {
   GraphNode,
