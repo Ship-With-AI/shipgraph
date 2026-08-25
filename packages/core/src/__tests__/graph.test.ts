@@ -23,6 +23,8 @@ class FakeEngine implements GraphEngine {
   autoPauseRedraw = true;
   cooldownTicks: number | null = null;
   reheatCount = 0;
+  clickCb: ((id: string) => void) | null = null;
+  bgClickCb: (() => void) | null = null;
 
   mount(): void {}
   setData(data: GraphData): void {
@@ -61,7 +63,12 @@ class FakeEngine implements GraphEngine {
   refresh(): void {}
   setCursor(_cursor: string): void {}
   onNodeHover(_cb: (id: string | null) => void): void {}
-  onNodeClick(_cb: (id: string) => void): void {}
+  onNodeClick(cb: (id: string) => void): void {
+    this.clickCb = cb;
+  }
+  onBackgroundClick(cb: () => void): void {
+    this.bgClickCb = cb;
+  }
   onNodeDrag(_cb: (id: string) => void): void {}
   onNodeDragEnd(_cb: (id: string) => void): void {}
   onLinkHover(_cb: (link: GraphLink | null) => void): void {}
@@ -160,32 +167,72 @@ describe('community / family focus (focusCommunity)', () => {
   });
 });
 
-describe('reduced motion (setReducedMotion) — keeps the render loop alive', () => {
-  it('disables autoPauseRedraw when enabled so interaction still repaints', () => {
-    const g = createGraphWithEngine(container, engine, raw);
-    expect(engine.autoPauseRedraw).toBe(true); // default: idle perf pause
-
-    g.setReducedMotion(true);
-    // Instant settle, but repaint must stay live (else halo/highlight/drag freeze).
+describe('render loop stays interactive (autoPauseRedraw off) + reduced motion', () => {
+  it('disables autoPauseRedraw on construction so interaction never freezes', () => {
+    createGraphWithEngine(container, engine, raw);
+    // force-graph never wakes redraw on pointer move; keeping auto-pause off
+    // means the shadow hit-test canvas keeps refreshing after the layout
+    // settles, so hover/click/selection stay responsive.
     expect(engine.autoPauseRedraw).toBe(false);
-    expect(engine.cooldownTicks).toBe(0);
   });
 
-  it('restores the perf pause and keeps the engine running when disabled', () => {
+  it('reduced motion settles instantly and keeps repaint alive', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    g.setReducedMotion(true);
+    expect(engine.cooldownTicks).toBe(0);
+    expect(engine.autoPauseRedraw).toBe(false);
+  });
+
+  it('disabling reduced motion resumes the engine, still repainting', () => {
     const g = createGraphWithEngine(container, engine, raw);
     g.setReducedMotion(true);
     g.setReducedMotion(false);
-    expect(engine.autoPauseRedraw).toBe(true);
     expect(engine.cooldownTicks).toBe(Infinity);
+    expect(engine.autoPauseRedraw).toBe(false);
+  });
+});
+
+describe('selection (select / click / background)', () => {
+  it('select sets the node and getSelected reflects it', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    expect(g.getSelected()).toBeNull();
+    g.select('b');
+    expect(g.getSelected()).toBe('b');
   });
 
-  it('keeps repaint alive on construction when reduced, without freezing layout', () => {
-    const e = new FakeEngine();
-    createGraphWithEngine(container, e, raw, { reducedMotion: true });
-    // Repaint stays live so interaction works once settled...
-    expect(e.autoPauseRedraw).toBe(false);
-    // ...but the engine is NOT stopped at construction: the initial layout
-    // must still compute (cooldownTicks left at the engine default).
-    expect(e.cooldownTicks).toBeNull();
+  it('select(null) clears the selection', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    g.select('b');
+    g.select(null);
+    expect(g.getSelected()).toBeNull();
+  });
+
+  it('emits select on every change (including clear)', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    const seen: (string | null)[] = [];
+    g.on('select', (id) => seen.push(id));
+    g.select('a');
+    g.select(null);
+    expect(seen).toEqual(['a', null]);
+  });
+
+  it('clicking a node selects it (engine onNodeClick → select)', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    engine.clickCb?.('c');
+    expect(g.getSelected()).toBe('c');
+  });
+
+  it('a background click clears the selection', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    g.select('a');
+    engine.bgClickCb?.();
+    expect(g.getSelected()).toBeNull();
+  });
+
+  it('setData resets an active selection', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    g.select('a');
+    g.setData(raw);
+    expect(g.getSelected()).toBeNull();
   });
 });

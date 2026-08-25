@@ -26,6 +26,8 @@ export interface UseShipGraphOptions {
   hiddenRelations?: string[] | null;
   /** Node id to ease the camera to. Reactive. */
   focus?: string | null;
+  /** Persistently selected node id (null clears). Reactive. */
+  selected?: string | null;
   /** Community/family to isolate + highlight (dims the rest). Reactive. */
   focusCommunity?: number | null;
   /** Honor prefers-reduced-motion path. Reactive. */
@@ -46,6 +48,8 @@ export interface UseShipGraphOptions {
   onHover?: (id: string | null) => void;
   /** A node was focused (camera easing began). */
   onFocus?: (id: string) => void;
+  /** The persistent selection changed (null clears). */
+  onSelect?: (id: string | null) => void;
   /** The core instance is mounted and ready. */
   onReady?: (graph: ShipGraphInstance) => void;
 }
@@ -91,6 +95,7 @@ export function useShipGraph(
     filters = null,
     hiddenRelations = null,
     focus = null,
+    selected = null,
     focusCommunity = null,
     reducedMotion,
     draggable,
@@ -101,6 +106,7 @@ export function useShipGraph(
     onLink,
     onHover,
     onFocus,
+    onSelect,
     onReady,
   } = opts;
 
@@ -110,8 +116,8 @@ export function useShipGraph(
 
   // Latest-callback ref: event handlers are subscribed once on the core, but
   // always call the newest callbacks — so inline arrow props never resubscribe.
-  const callbacks = useRef({ onNode, onLink, onHover, onFocus, onReady });
-  callbacks.current = { onNode, onLink, onHover, onFocus, onReady };
+  const callbacks = useRef({ onNode, onLink, onHover, onFocus, onSelect, onReady });
+  callbacks.current = { onNode, onLink, onHover, onFocus, onSelect, onReady };
 
   // First-run guards so initial data application (already handed to createGraph)
   // and the deep-link fallback each happen exactly once per instance.
@@ -143,6 +149,7 @@ export function useShipGraph(
         g.on('linkclick', (link) => callbacks.current.onLink?.(link)),
         g.on('hover', (id) => callbacks.current.onHover?.(id)),
         g.on('focus', (id) => callbacks.current.onFocus?.(id)),
+        g.on('select', (id) => callbacks.current.onSelect?.(id)),
       );
       setGraph(g);
       callbacks.current.onReady?.(g);
@@ -187,6 +194,11 @@ export function useShipGraph(
     if (!graph) return;
     graph.focusCommunity(focusCommunity ?? null);
   }, [graph, focusCommunity]);
+
+  useEffect(() => {
+    if (!graph) return;
+    graph.select(selected ?? null);
+  }, [graph, selected]);
 
   useEffect(() => {
     if (!graph || reducedMotion === undefined) return;

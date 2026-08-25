@@ -30,6 +30,8 @@
     hiddenRelations?: string[] | null;
     /** Node id to ease the camera to. Reactive. */
     focus?: string | null;
+    /** Persistently selected node id (null clears). Reactive. */
+    selected?: string | null;
     /** Community/family to isolate + highlight (dims the rest). Reactive. */
     focusCommunity?: number | null;
     /** Honor prefers-reduced-motion path. Reactive. */
@@ -52,6 +54,8 @@
     onHover?: (id: string | null) => void;
     /** A node was focused (camera easing began). */
     onFocus?: (id: string) => void;
+    /** The persistent selection changed (null clears). */
+    onSelect?: (id: string | null) => void;
     /** The core instance is mounted and ready. */
     onReady?: (graph: ShipGraphInstance) => void;
   }
@@ -61,6 +65,7 @@
     filters = null,
     hiddenRelations = null,
     focus = null,
+    selected = null,
     focusCommunity = null,
     reducedMotion = undefined,
     draggable = undefined,
@@ -72,6 +77,7 @@
     onLink,
     onHover,
     onFocus,
+    onSelect,
     onReady,
   }: Props = $props();
 
@@ -179,6 +185,7 @@
         g.on('linkclick', (link) => onLink?.(link)),
         g.on('hover', (id) => onHover?.(id)),
         g.on('focus', (id) => onFocus?.(id)),
+        g.on('select', (id) => onSelect?.(id)),
       );
       graph = g;
       onReady?.(g);
@@ -223,6 +230,12 @@
     const community = focusCommunity;
     if (!graph) return;
     graph.focusCommunity(community ?? null);
+  });
+
+  $effect(() => {
+    const id = selected;
+    if (!graph) return;
+    graph.select(id ?? null);
   });
 
   $effect(() => {

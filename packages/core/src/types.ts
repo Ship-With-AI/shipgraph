@@ -97,6 +97,7 @@ export interface ShipGraphOptions {
 export type ShipGraphEvent =
   | 'hover'
   | 'click'
+  | 'select'
   | 'linkhover'
   | 'linkclick'
   | 'focus'
@@ -107,6 +108,8 @@ export type ShipGraphEvent =
 export interface ShipGraphEventMap {
   hover: string | null;
   click: string;
+  /** Persistent node selection changed (null clears). */
+  select: string | null;
   /** 1-hop link hover (null clears). Endpoints are node ids. */
   linkhover: GraphLink | null;
   /** Link click. Endpoints are node ids. */
@@ -160,6 +163,15 @@ export interface ShipGraph {
   isDimmed(nodeId: string): boolean;
   /** Programmatically drive the 1-hop hover halo (null clears it). */
   hoverHalo(nodeId: string | null): void;
+  /**
+   * Persistently select a node (null clears). The selected node + its 1-hop
+   * neighbors stay highlighted (rest dimmed) until the selection changes or a
+   * background click clears it — independent of the transient hover halo.
+   * Clicking a node selects it; clicking a neighbor carries the exploration.
+   */
+  select(nodeId: string | null): void;
+  /** The currently selected node id, or null. */
+  getSelected(): string | null;
   /** Hide neighbors that hang solely off this node. */
   collapse(nodeId: string): void;
   /** Restore neighbors previously hidden by collapsing this node. */
