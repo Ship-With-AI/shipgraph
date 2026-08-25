@@ -40,6 +40,8 @@ export function relationsOf(data: GraphData): string[] {
  *
  * - `relations`: keep only links of these classes (null/empty = keep all).
  * - `hidden`: node ids removed from view; links touching them are dropped.
+ * - `hiddenRelations`: relation classes to hide live (their links are dropped
+ *   even when `relations` would otherwise keep them).
  *
  * Returns a new GraphData referencing the SAME node/link objects (no clone) so
  * the engine keeps stable identities and layout positions across updates.
@@ -48,11 +50,14 @@ export function applyView(
   full: GraphData,
   relations: string[] | null,
   hidden: ReadonlySet<string>,
+  hiddenRelations?: ReadonlySet<string>,
 ): GraphData {
   const relSet = relations && relations.length ? new Set(relations) : null;
+  const hideRel = hiddenRelations && hiddenRelations.size ? hiddenRelations : null;
   const nodes = hidden.size ? full.nodes.filter((n) => !hidden.has(n.id)) : full.nodes;
   const links = full.links.filter((l: GraphLink) => {
     if (relSet && !relSet.has(l.relation)) return false;
+    if (hideRel && hideRel.has(l.relation)) return false;
     if (hidden.size) {
       if (hidden.has(endpointId(l.source))) return false;
       if (hidden.has(endpointId(l.target))) return false;
@@ -60,6 +65,13 @@ export function applyView(
     return true;
   });
   return { nodes, links };
+}
+
+/** Node ids belonging to a given community (a "family"). Pure. */
+export function communityMembers(data: GraphData, community: number | null): string[] {
+  const out: string[] = [];
+  for (const n of data.nodes) if (n.community === community) out.push(n.id);
+  return out;
 }
 
 /**

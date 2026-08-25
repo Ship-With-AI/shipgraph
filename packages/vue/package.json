@@ -1,6 +1,6 @@
 {
   "name": "@shipgraph/vue",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Vue 3 binding for shipgraph — a reactive, SSR/Nuxt-safe <ShipGraph> component over @shipgraph/core. Public props/emits are engine-agnostic.",
   "license": "MIT",
   "type": "module",

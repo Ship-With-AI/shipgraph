@@ -9,6 +9,7 @@ import {
   applyView,
   buildAdjacency,
   collapseTargets,
+  communityMembers,
   endpointId,
   relationsOf,
 } from './graphops';
@@ -56,6 +57,9 @@ class ShipGraphImpl implements ShipGraph {
   private readonly hidden = new Set<string>();
   private readonly hiddenBy = new Map<string, string>();
   private readonly collapsed = new Set<string>();
+  private readonly hiddenRelations = new Set<string>();
+  private focusedCommunity: number | null = null;
+  private highlightSet: Set<string> | null = null;
 
   private hoverNode: string | null = null;
   private hoverSet = new Set<string>();
@@ -113,22 +117,32 @@ class ShipGraphImpl implements ShipGraph {
   private wireStyling(): void {
     this.engine.setNodeRenderer((n: RenderNode, ctx, scale) => {
       const r = (1 + Math.sqrt(n.degree)) * 1.6;
-      const active = this.hoverNode !== null;
+      const hoverActive = this.hoverNode !== null;
       const inHalo = this.hoverSet.has(n.id);
-      const dim = active && !inHalo;
-      if (active && inHalo) {
+      const community = this.highlightSet;
+      const isMember = community !== null && community.has(n.id);
+      const commDim = community !== null && !isMember;
+      const dim = (hoverActive && !inHalo) || commDim;
+      if (hoverActive && inHalo) {
         ctx.beginPath();
         ctx.arc(n.x, n.y, r + 6, 0, 2 * Math.PI);
         ctx.fillStyle = n.id === this.hoverNode ? 'rgba(110,231,183,.28)' : 'rgba(110,231,183,.14)';
+        ctx.fill();
+      }
+      // Community focus ring: emphasize members even without a hover.
+      if (isMember && !hoverActive) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r + 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(110,231,183,.16)';
         ctx.fill();
       }
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
       ctx.fillStyle = dim ? 'rgba(90,105,120,.25)' : communityColor(n.community);
       ctx.fill();
-      if (n.id === this.hoverNode) {
+      if (n.id === this.hoverNode || (isMember && !hoverActive)) {
         ctx.lineWidth = 1.5 / scale;
-        ctx.strokeStyle = '#eafff5';
+        ctx.strokeStyle = n.id === this.hoverNode ? '#eafff5' : 'rgba(110,231,183,.9)';
         ctx.stroke();
       }
       if (scale > 2 && !dim) {
@@ -144,11 +158,21 @@ class ShipGraphImpl implements ShipGraph {
           ? 'rgba(110,231,183,.9)'
           : 'rgba(120,140,160,.06)';
       }
+      if (this.highlightSet) {
+        return this.highlightSet.has(s) && this.highlightSet.has(t)
+          ? 'rgba(110,231,183,.7)'
+          : 'rgba(120,140,160,.05)';
+      }
       return 'rgba(120,140,160,.22)';
     });
     this.engine.setLinkWidth((_l, s, t) => {
-      if (!this.hoverNode) return 1;
-      return this.hoverSet.has(s) && this.hoverSet.has(t) ? 2.5 : 0.5;
+      if (this.hoverNode) {
+        return this.hoverSet.has(s) && this.hoverSet.has(t) ? 2.5 : 0.5;
+      }
+      if (this.highlightSet) {
+        return this.highlightSet.has(s) && this.highlightSet.has(t) ? 2 : 0.5;
+      }
+      return 1;
     });
   }
 
@@ -200,7 +224,7 @@ class ShipGraphImpl implements ShipGraph {
   }
 
   private rebuild(): void {
-    this.engine.setData(applyView(this.full, this.activeRelations, this.hidden));
+    this.engine.setData(applyView(this.full, this.activeRelations, this.hidden, this.hiddenRelations));
     this.engine.refresh();
   }
 
@@ -218,13 +242,16 @@ class ShipGraphImpl implements ShipGraph {
     this.hidden.clear();
     this.hiddenBy.clear();
     this.collapsed.clear();
+    this.hiddenRelations.clear();
+    this.focusedCommunity = null;
+    this.highlightSet = null;
     this.hoverNode = null;
     this.hoverSet = new Set();
     this.rebuild();
   }
 
   getData(): GraphData {
-    return applyView(this.full, this.activeRelations, this.hidden);
+    return applyView(this.full, this.activeRelations, this.hidden, this.hiddenRelations);
   }
 
   getFullData(): GraphData {
@@ -250,6 +277,54 @@ class ShipGraphImpl implements ShipGraph {
 
   getRelations(): string[] {
     return this.allRelations.slice();
+  }
+
+  toggleRelation(relation: string, visible?: boolean): void {
+    const hide = visible === undefined ? !this.hiddenRelations.has(relation) : !visible;
+    if (hide) this.hiddenRelations.add(relation);
+    else this.hiddenRelations.delete(relation);
+    this.rebuild();
+  }
+
+  getHiddenRelations(): string[] {
+    return [...this.hiddenRelations].sort();
+  }
+
+  focusCommunity(community: number | null): void {
+    this.focusedCommunity = community;
+    if (community === null) {
+      this.highlightSet = null;
+      this.engine.refresh();
+      return;
+    }
+    const members = communityMembers(this.full, community);
+    this.highlightSet = new Set(members);
+    // Ease the camera to the members' centroid so the community "isolates"
+    // into view. Positions may be unset (pre-layout / headless) — skip then.
+    let sx = 0;
+    let sy = 0;
+    let count = 0;
+    for (const id of members) {
+      const pos = this.engine.nodePosition(id);
+      if (!pos) continue;
+      sx += pos.x;
+      sy += pos.y;
+      count++;
+    }
+    if (count > 0) this.engine.centerAt(sx / count, sy / count, this.camMs());
+    this.engine.refresh();
+  }
+
+  getFocusedCommunity(): number | null {
+    return this.focusedCommunity;
+  }
+
+  getHighlightedNodes(): string[] {
+    return this.highlightSet ? [...this.highlightSet] : [];
+  }
+
+  isDimmed(nodeId: string): boolean {
+    return this.highlightSet !== null && !this.highlightSet.has(nodeId);
   }
 
   hoverHalo(nodeId: string | null): void {
