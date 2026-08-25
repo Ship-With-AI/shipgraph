@@ -6,7 +6,7 @@ const repoRoot = resolve(__dirname, '../..');
 
 // The live demo (and its @shipgraph/vue import) is served straight from the
 // TypeScript/SFC source of the workspace packages, so the docs exercise the
-// exact public surface a consumer sees — and `npm run dev` needs no prior
+// exact public surface a consumer sees — and `pnpm dev` needs no prior
 // package build. Same pattern the per-package demos use.
 export default defineConfig({
   title: 'shipgraph',

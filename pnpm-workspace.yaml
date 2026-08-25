@@ -1,0 +1,12 @@
+packages:
+  - 'packages/*'
+  - 'docs'
+
+# Explicit build-script decisions keep `pnpm install` non-interactive and clean
+# on a fresh clone (pnpm 11 otherwise errors on undecided dependency builds).
+# - esbuild: run its install script (prebuilt platform binary).
+# - puppeteer: skip its ~150MB Chromium download — only the optional perf
+#   harness needs it, never build/test/typecheck/publish.
+allowBuilds:
+  esbuild: true
+  puppeteer: false

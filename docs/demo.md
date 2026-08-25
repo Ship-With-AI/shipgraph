@@ -24,13 +24,13 @@ package build required.
 ```sh
 git clone https://github.com/Ship-With-AI/shipgraph
 cd shipgraph
-npm install
-npm run docs:dev      # from the repo root
-# ...or: npm run dev -w @shipgraph/docs
+pnpm install
+pnpm docs:dev      # from the repo root
+# ...or: pnpm --filter @shipgraph/docs dev
 ```
 
 Open the printed URL and visit **/demo**. Build the static site with
-`npm run docs:build` and preview it with `npm run docs:preview`.
+`pnpm docs:build` and preview it with `pnpm docs:preview`.
 
 ## How it's wired
 

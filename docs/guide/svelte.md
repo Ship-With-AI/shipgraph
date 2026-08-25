@@ -5,7 +5,7 @@ An idiomatic, SSR-safe Svelte 5 `<ShipGraph>` component over the core.
 ## Install
 
 ```sh
-npm i @shipgraph/svelte @shipgraph/core svelte
+pnpm add @shipgraph/svelte @shipgraph/core svelte
 ```
 
 ## Use

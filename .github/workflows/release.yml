@@ -1,0 +1,45 @@
+name: Release
+
+# Publishes the MIT packages to npm. Fires ONLY on a version tag push (v*),
+# so day-to-day pushes never publish. Cut a release with e.g. `git tag v1.0.0
+# && git push origin v1.0.0` once the operator gives the go-ahead.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write # required for npm provenance attestation
+
+jobs:
+  publish:
+    name: build · verify · publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      # Gate the publish on a green build + typecheck + full test suite.
+      - name: Build, typecheck, test
+        run: pnpm exec turbo run build typecheck test
+
+      # Real publish of every public workspace package. Private packages
+      # (root, @shipgraph/docs) are skipped automatically. workspace:^ ranges
+      # are rewritten to concrete versions by pnpm at pack time.
+      - name: Publish to npm (with provenance)
+        run: pnpm -r publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'

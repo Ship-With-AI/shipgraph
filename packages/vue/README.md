@@ -9,7 +9,7 @@ construction — the Canvas 2D engine is loaded client-only.
 ## Install
 
 ```sh
-npm i @shipgraph/vue @shipgraph/core vue
+pnpm add @shipgraph/vue @shipgraph/core vue
 ```
 
 ## Usage
@@ -112,7 +112,7 @@ el.value?.graph;                            // the live core instance (fit(), et
 
 ## Scripts
 
-- `npm run build` — type-check (`vue-tsc`) + bundle to ESM + `.d.ts`.
-- `npm test` — vitest component tests (mount, prop reactivity, emits) under jsdom.
-- `npm run demo` — dev server on the real `graph.json` (port 5191).
-- `npm run perf` — headless puppeteer perf harness → `demo/perf-results.json` + screenshots.
+- `pnpm build` — type-check (`vue-tsc`) + bundle to ESM + `.d.ts`.
+- `pnpm test` — vitest component tests (mount, prop reactivity, emits) under jsdom.
+- `pnpm demo` — dev server on the real `graph.json` (port 5191).
+- `pnpm perf` — headless puppeteer perf harness → `demo/perf-results.json` + screenshots.

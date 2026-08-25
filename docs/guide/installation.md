@@ -11,7 +11,7 @@ Rollup, etc.) or native ESM. There is no CommonJS build.
 ## Core (framework-agnostic)
 
 ```sh
-npm i @shipgraph/core
+pnpm add @shipgraph/core
 ```
 
 No framework required — mount into any `HTMLElement`. See the
@@ -20,7 +20,7 @@ No framework required — mount into any `HTMLElement`. See the
 ## Vue 3
 
 ```sh
-npm i @shipgraph/vue @shipgraph/core vue
+pnpm add @shipgraph/vue @shipgraph/core vue
 ```
 
 `vue@^3.3.0` is a peer dependency. SSR/Nuxt-safe. See the
@@ -29,7 +29,7 @@ npm i @shipgraph/vue @shipgraph/core vue
 ## React
 
 ```sh
-npm i @shipgraph/react @shipgraph/core react react-dom
+pnpm add @shipgraph/react @shipgraph/core react react-dom
 ```
 
 `react`/`react-dom` (`>=17`) are peer dependencies. SSR-safe (Next.js / Remix).
@@ -38,7 +38,7 @@ See the [React quick start](/guide/react).
 ## Svelte 5
 
 ```sh
-npm i @shipgraph/svelte @shipgraph/core svelte
+pnpm add @shipgraph/svelte @shipgraph/core svelte
 ```
 
 `svelte@^5.0.0` is a peer dependency. SSR-safe (SvelteKit). See the
