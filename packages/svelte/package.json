@@ -1,0 +1,55 @@
+{
+  "name": "@shipgraph/svelte",
+  "version": "0.5.0",
+  "description": "Svelte binding for shipgraph — an idiomatic, SSR-safe <ShipGraph> component over @shipgraph/core. Public props/events are engine-agnostic.",
+  "license": "MIT",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "svelte": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "bundle": "svelte-package -i src -o dist",
+    "build": "npm run check && npm run bundle",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "dependencies": {
+    "@shipgraph/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@shipgraph/core": "*",
+    "@sveltejs/package": "^2.5.8",
+    "@sveltejs/vite-plugin-svelte": "^4.0.4",
+    "@testing-library/svelte": "^5.2.8",
+    "jsdom": "^25.0.1",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ship-With-AI/shipgraph.git",
+    "directory": "packages/svelte"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
