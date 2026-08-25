@@ -21,7 +21,7 @@ demo, then migrate StackMap onto it and delete the old Cytoscape view.
 - [x] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
 - [x] **Phase 6: Docs & Demo Site** - Install + 3 bindings, runnable examples
 - [ ] **Phase 7: Release Pipeline (pnpm + Turborepo)** - MIT packages, CI, versioning — pipeline ready, publish operator-gated
-- [ ] **Phase 8: StackMap Migration** - Replace GraphView.client.vue, remove old code
+- [x] **Phase 8: StackMap Migration** - Replace GraphView.client.vue, remove old code
 
 ## Phase Details
 
@@ -143,7 +143,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 08-01: StackMap migration PR
+- [x] 08-01: StackMap migration PR (Ship-With-AI/stackmap#5)
 
 ## Progress
 
@@ -159,4 +159,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 5. React & Svelte Wrappers | 2/2 | Complete | 2026-08-25 |
 | 6. Docs & Demo Site | 1/1 | Complete | 2026-08-25 |
 | 7. Release Pipeline (pnpm + Turborepo) | 1/1 | Pipeline ready — publish operator-gated | 2026-08-25 |
-| 8. StackMap Migration | 0/1 | Not started | - |
+| 8. StackMap Migration | 1/1 | Complete | 2026-08-25 |
