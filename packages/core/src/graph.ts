@@ -64,6 +64,9 @@ class ShipGraphImpl implements ShipGraph {
   private readonly listeners: { [E in ShipGraphEvent]: Set<(p: ShipGraphEventMap[E]) => void> } = {
     hover: new Set(),
     click: new Set(),
+    linkhover: new Set(),
+    linkclick: new Set(),
+    focus: new Set(),
     settle: new Set(),
     dragend: new Set(),
     frame: new Set(),
@@ -159,6 +162,8 @@ class ShipGraphImpl implements ShipGraph {
       this.focus(id);
       this.emit('click', id);
     });
+    this.engine.onLinkHover((link) => this.emit('linkhover', link));
+    this.engine.onLinkClick((link) => this.emit('linkclick', link));
     // Spring-back drag: pin while dragging; on release, unpin + reheat so the
     // physics reels the node home. Reduced motion keeps it pinned (no bounce).
     this.engine.onNodeDrag((id) => this.engine.pinNode(id));
@@ -231,6 +236,7 @@ class ShipGraphImpl implements ShipGraph {
     if (!pos) return;
     this.engine.centerAt(pos.x, pos.y, this.camMs());
     this.engine.zoom(this.reduceMotion ? this.engine.getZoom() : this.opts.focusZoom, this.camMs());
+    this.emit('focus', nodeId);
   }
 
   fit(ms?: number): void {

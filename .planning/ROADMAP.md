@@ -16,7 +16,7 @@ demo, then migrate StackMap onto it and delete the old Cytoscape view.
 
 - [x] **Phase 1: Research & Spike** - Build-vs-wrap decision, proven on real data
 - [x] **Phase 2: Core Architecture** - Framework-agnostic TS core + feel primitives
-- [ ] **Phase 3: Vue Wrapper & Feel Polish** - Vue 3 binding + NVL-grade feel bar
+- [x] **Phase 3: Vue Wrapper & Feel Polish** - Vue 3 binding + NVL-grade feel bar
 - [ ] **Phase 4: Feature-Parity Port** - Filters, community focus, deep link, a11y
 - [ ] **Phase 5: React & Svelte Wrappers** - Two more thin bindings, same core
 - [ ] **Phase 6: Docs & Demo Site** - Install + 3 bindings, runnable examples
@@ -71,8 +71,8 @@ pass that makes the feel bar match NVL/Bloom.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Vue 3 binding (lifecycle, reactivity, events, SSR/Nuxt-safe mount)
-- [ ] 03-02: Feel polish + reduced-motion + expand/collapse
+- [x] 03-01: Vue 3 binding (lifecycle, reactivity, events, SSR/Nuxt-safe mount)
+- [x] 03-02: Feel polish + reduced-motion + expand/collapse
 
 ### Phase 4: Feature-Parity Port
 **Goal**: Everything StackMap's current graph does, so migration loses nothing.
@@ -152,7 +152,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Research & Spike | 1/1 | Complete | 2026-08-24 |
 | 2. Core Architecture | 2/2 | Complete | 2026-08-24 |
-| 3. Vue Wrapper & Feel Polish | 0/2 | Not started | - |
+| 3. Vue Wrapper & Feel Polish | 2/2 | Complete | 2026-08-24 |
 | 4. Feature-Parity Port | 0/2 | Not started | - |
 | 5. React & Svelte Wrappers | 0/2 | Not started | - |
 | 6. Docs & Demo Site | 0/1 | Not started | - |

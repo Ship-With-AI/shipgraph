@@ -29,6 +29,16 @@ function idOf(end: string | number | FGNode | undefined): string {
   return String(end);
 }
 
+// Map an engine link back to shipgraph's engine-neutral GraphLink (id endpoints).
+function toGraphLink(l: FGLink): GraphLink {
+  return {
+    source: idOf(l.source),
+    target: idOf(l.target),
+    relation: l.relation,
+    weight: l.weight,
+  };
+}
+
 export class ForceGraphEngine implements GraphEngine {
   private fg: FGInstance | null = null;
   private container: HTMLElement | null = null;
@@ -197,6 +207,14 @@ export class ForceGraphEngine implements GraphEngine {
 
   onNodeDragEnd(cb: (id: string) => void): void {
     this.inst().onNodeDragEnd((n) => cb(String(n.id)));
+  }
+
+  onLinkHover(cb: (link: GraphLink | null) => void): void {
+    this.inst().onLinkHover((l) => cb(l ? toGraphLink(l) : null));
+  }
+
+  onLinkClick(cb: (link: GraphLink) => void): void {
+    this.inst().onLinkClick((l) => cb(toGraphLink(l)));
   }
 
   onRenderFramePre(cb: () => void): void {
