@@ -88,6 +88,13 @@ export interface ShipGraphOptions {
   /** Allow dragging nodes with spring-back on release. Default true. */
   draggable?: boolean;
   /**
+   * Resolve a node's fill color. Defaults to the built-in community palette,
+   * which is a hue hash — fine for spotting clusters, meaningless as a legend.
+   * Supply this to color by something the reader already understands (a topic,
+   * a language, a status) so the colors can be labelled.
+   */
+  nodeColor?: (node: GraphNode) => string;
+  /**
    * Provide the reduced-motion preference explicitly (e.g. for tests/SSR).
    * When omitted, the browser `matchMedia` value is used if available.
    */

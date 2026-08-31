@@ -46,6 +46,7 @@ export class ForceGraphEngine implements GraphEngine {
   private nodeRenderer: NodeRenderer | null = null;
   private linkColorFn: LinkColorFn | null = null;
   private linkWidthFn: LinkWidthFn | null = null;
+  private resizeObserver: ResizeObserver | null = null;
   private readonly backgroundColor: string;
 
   constructor(backgroundColor = '#0b0f14') {
@@ -73,6 +74,32 @@ export class ForceGraphEngine implements GraphEngine {
       .linkColor((l) => (this.linkColorFn ? this.linkColorFn(l, idOf(l.source), idOf(l.target)) : 'rgba(120,140,160,.22)'))
       .linkWidth((l) => (this.linkWidthFn ? this.linkWidthFn(l, idOf(l.source), idOf(l.target)) : 1));
     this.fg = fg;
+    // force-graph defaults width/height to the WINDOW, not the mount element, and
+    // never re-measures. Left alone, the canvas is viewport-sized inside whatever
+    // box it was given: the drawing surface overflows its frame and the layout
+    // centers on the wrong origin. Adopt the container's box and track it.
+    this.syncSize();
+    this.observeSize(container);
+  }
+
+  /** Match the drawing surface to the mount element. No-op until it has a box. */
+  private syncSize(): void {
+    const { fg, container } = this;
+    if (!fg || !container) return;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    // A zero box means "not laid out yet" (hidden tab, lazy mount). Keep the
+    // current size and wait for the observer rather than collapsing to nothing.
+    if (w <= 0 || h <= 0) return;
+    if (fg.width() !== w) fg.width(w);
+    if (fg.height() !== h) fg.height(h);
+  }
+
+  private observeSize(container: HTMLElement): void {
+    // Guard: absent under SSR and in some test environments.
+    if (typeof ResizeObserver === 'undefined') return;
+    this.resizeObserver = new ResizeObserver(() => this.syncSize());
+    this.resizeObserver.observe(container);
   }
 
   setData(data: GraphData): void {
@@ -234,6 +261,8 @@ export class ForceGraphEngine implements GraphEngine {
   }
 
   destroy(): void {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     if (this.fg) {
       this.fg._destructor();
       this.fg = null;

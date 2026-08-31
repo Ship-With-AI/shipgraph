@@ -16,6 +16,7 @@ import {
 import type {
   GraphData,
   GraphLink,
+  GraphNode,
   RawGraph,
   ShipGraph,
   ShipGraphEvent,
@@ -47,7 +48,9 @@ function prefersReducedMotion(): boolean {
 
 class ShipGraphImpl implements ShipGraph {
   private readonly engine: GraphEngine;
-  private readonly opts: Required<Omit<ShipGraphOptions, 'physics' | 'reducedMotion'>>;
+  private readonly opts: Required<
+    Omit<ShipGraphOptions, 'physics' | 'reducedMotion' | 'nodeColor'>
+  > & { nodeColor: (node: GraphNode) => string };
   private readonly physics: Required<NonNullable<ShipGraphOptions['physics']>>;
 
   private full: GraphData = { nodes: [], links: [] };
@@ -87,6 +90,7 @@ class ShipGraphImpl implements ShipGraph {
       focusZoom: options.focusZoom ?? DEFAULTS.focusZoom,
       respectReducedMotion: options.respectReducedMotion ?? true,
       draggable: options.draggable ?? true,
+      nodeColor: options.nodeColor ?? ((n) => communityColor(n.community)),
     };
     this.physics = {
       chargeStrength: options.physics?.chargeStrength ?? DEFAULTS.chargeStrength,
@@ -155,7 +159,7 @@ class ShipGraphImpl implements ShipGraph {
       }
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
-      ctx.fillStyle = dim ? 'rgba(90,105,120,.25)' : communityColor(n.community);
+      ctx.fillStyle = dim ? 'rgba(90,105,120,.25)' : this.opts.nodeColor(n);
       ctx.fill();
       if (n.id === focusNode || (isMember && !focusActive)) {
         ctx.lineWidth = 1.5 / scale;

@@ -12,6 +12,7 @@ import type {
   LinkColorFn,
   LinkWidthFn,
   NodeRenderer,
+  RenderNode,
 } from '../engine/types';
 import type { GraphData, GraphLink, RawGraph } from '../types';
 
@@ -234,5 +235,69 @@ describe('selection (select / click / background)', () => {
     g.select('a');
     g.setData(raw);
     expect(g.getSelected()).toBeNull();
+  });
+});
+
+// The renderer is the only place node fill is decided, so drive it directly:
+// run the captured NodeRenderer over a recording 2D context and read fillStyle
+// back. The node body is the last arc filled before stroke/label work.
+function paint(engine: FakeEngine, node: { id: string; community?: number | null }): string {
+  let pending = '';
+  let body = '';
+  let arcs = 0;
+  const ctx = {
+    set fillStyle(v: string) {
+      pending = v;
+    },
+    get fillStyle() {
+      return pending;
+    },
+    beginPath() {},
+    arc() {
+      arcs++;
+    },
+    fill() {
+      body = pending;
+    },
+    stroke() {},
+    fillText() {},
+    strokeStyle: '',
+    lineWidth: 0,
+    font: '',
+  } as unknown as CanvasRenderingContext2D;
+  const full: RenderNode = {
+    id: node.id,
+    label: node.id,
+    type: null,
+    community: node.community ?? null,
+    communityName: null,
+    degree: 1,
+    x: 0,
+    y: 0,
+  };
+  engine.nodeRenderer?.(full, ctx, 1);
+  if (arcs === 0) throw new Error('renderer drew nothing');
+  return body;
+}
+
+describe('nodeColor option', () => {
+  it('defaults to the built-in community palette', () => {
+    createGraphWithEngine(container, engine, raw);
+    // Same community → same color; different community → different color.
+    expect(paint(engine, { id: 'a', community: 1 })).toBe(paint(engine, { id: 'b', community: 1 }));
+    expect(paint(engine, { id: 'a', community: 1 })).not.toBe(
+      paint(engine, { id: 'c', community: 2 }),
+    );
+  });
+
+  it('lets the caller color by something other than community', () => {
+    const byId: Record<string, string> = { a: '#ff0000', b: '#00ff00' };
+    createGraphWithEngine(container, engine, raw, {
+      nodeColor: (n) => byId[n.id] ?? '#888888',
+    });
+    // Both are community 1, so only the override can tell them apart.
+    expect(paint(engine, { id: 'a', community: 1 })).toBe('#ff0000');
+    expect(paint(engine, { id: 'b', community: 1 })).toBe('#00ff00');
+    expect(paint(engine, { id: 'c', community: 2 })).toBe('#888888');
   });
 });
