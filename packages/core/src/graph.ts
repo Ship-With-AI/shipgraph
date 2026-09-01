@@ -253,8 +253,13 @@ class ShipGraphImpl implements ShipGraph {
 
   private setHover(id: string | null): void {
     this.hoverNode = id;
+    // Seed with the node itself, exactly as select() does. Leaving it out makes
+    // the halo describe the wrong shape: the node fails its own `inFocus` test
+    // so it dims itself, and `has(source) && has(target)` then lights up the
+    // links BETWEEN its neighbours while its own links fade.
     const set = new Set<string>();
     if (id) {
+      set.add(id);
       for (const nb of this.adj.get(id) ?? []) set.add(nb);
     }
     this.hoverSet = set;

@@ -59,7 +59,10 @@ class FakeEngine implements GraphEngine {
   setNodeRenderer(fn: NodeRenderer): void {
     this.nodeRenderer = fn;
   }
-  setLinkColor(_fn: LinkColorFn): void {}
+  linkColorFn: LinkColorFn | null = null;
+  setLinkColor(fn: LinkColorFn): void {
+    this.linkColorFn = fn;
+  }
   setLinkWidth(_fn: LinkWidthFn): void {}
   refresh(): void {}
   setCursor(_cursor: string): void {}
@@ -364,5 +367,57 @@ describe('label crowding (labelMaxNodes)', () => {
     createGraphWithEngine(container, engine, raw, { labelMaxNodes: 0 });
     expect(labelled(engine, 'a', 1)).toBe(false);
     expect(labelled(engine, 'a', 3)).toBe(true);
+  });
+});
+
+describe('hover halo covers the hovered node itself', () => {
+  // Regression: the hover set was seeded empty and filled with neighbours only,
+  // so the hovered node failed its own membership test. It dimmed itself into a
+  // hollow disc, and because links light up on `has(source) && has(target)` the
+  // edges BETWEEN its neighbours lit up while its own edges faded — the halo
+  // described the wrong shape entirely.
+  const link = { relation: 'references', weight: 0.5 };
+  const bright = (engine: FakeEngine, s: string, t: string) =>
+    engine.linkColorFn?.({ source: s, target: t, ...link }, s, t);
+
+  it('does not dim the node under the cursor', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    const undimmed = paint(engine, { id: 'a' });
+
+    g.hoverHalo('a');
+
+    expect(paint(engine, { id: 'a' })).toBe(undimmed);
+  });
+
+  it('lights the hovered node\u2019s own links, not just links between neighbours', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    g.hoverHalo('b'); // b neighbours a and c
+
+    const own = bright(engine, 'b', 'a');
+    const betweenNeighbours = bright(engine, 'a', 'c');
+    const unrelated = bright(engine, 'c', 'd');
+
+    expect(own).toBe(betweenNeighbours); // both inside the halo
+    expect(own).not.toBe(unrelated); // d is outside it
+  });
+
+  it('still dims everything outside the halo', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    const undimmed = paint(engine, { id: 'd' });
+
+    g.hoverHalo('a'); // a neighbours only b
+
+    expect(paint(engine, { id: 'b' })).toBe(undimmed);
+    expect(paint(engine, { id: 'd' })).not.toBe(undimmed);
+  });
+
+  it('clears the halo when the cursor leaves', () => {
+    const g = createGraphWithEngine(container, engine, raw);
+    const undimmed = paint(engine, { id: 'd' });
+
+    g.hoverHalo('a');
+    g.hoverHalo(null);
+
+    expect(paint(engine, { id: 'd' })).toBe(undimmed);
   });
 });
