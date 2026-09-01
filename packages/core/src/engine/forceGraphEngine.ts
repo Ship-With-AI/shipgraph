@@ -78,8 +78,34 @@ export class ForceGraphEngine implements GraphEngine {
     // never re-measures. Left alone, the canvas is viewport-sized inside whatever
     // box it was given: the drawing surface overflows its frame and the layout
     // centers on the wrong origin. Adopt the container's box and track it.
+    this.detachFromLayout(container);
     this.syncSize();
     this.observeSize(container);
+  }
+
+  /**
+   * Stop the canvas from sizing its own container.
+   *
+   * force-graph writes an explicit px width/height onto the <canvas>, which
+   * becomes the min-content contribution of every ancestor. Inside a CSS grid
+   * or flex track with the default `min-width: auto` that inflates the track,
+   * we measure the inflated box, write a bigger canvas, and inflate it again —
+   * a widening feedback loop that walks the graph off the side of the page.
+   *
+   * Taking force-graph's wrapper out of flow makes measurement strictly
+   * one-way: the container is sized by the page, the canvas follows.
+   * The mount element must therefore carry its own size; the framework
+   * wrappers give it width/height 100% plus a min-height floor.
+   */
+  private detachFromLayout(container: HTMLElement): void {
+    if (typeof getComputedStyle !== 'function') return;
+    // `''` shows up in environments with a partial CSSOM (jsdom); treat it as static.
+    const position = getComputedStyle(container).position;
+    if (!position || position === 'static') container.style.position = 'relative';
+    const wrapper = container.firstElementChild as HTMLElement | null;
+    if (!wrapper) return;
+    wrapper.style.position = 'absolute';
+    wrapper.style.inset = '0';
   }
 
   /** Match the drawing surface to the mount element. No-op until it has a box. */
