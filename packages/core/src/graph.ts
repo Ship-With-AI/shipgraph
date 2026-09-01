@@ -33,6 +33,9 @@ const DEFAULTS = {
   linkDistanceBase: 30,
   linkDistanceSpread: 40,
   linkStrength: 0.5,
+  // Above this many rendered nodes, labels only appear once you zoom in. Sized
+  // to comfortably cover a filtered view while still holding back a full graph.
+  labelMaxNodes: 120,
 } as const;
 
 // Deterministic community palette (hue rotates per community id).
@@ -68,6 +71,8 @@ class ShipGraphImpl implements ShipGraph {
   private hoverSet = new Set<string>();
   private selectedNode: string | null = null;
   private selectedSet = new Set<string>();
+  /** Nodes currently pushed to the engine — drives label crowding. */
+  private visibleNodeCount = 0;
   private reduceMotion: boolean;
 
   private readonly listeners: { [E in ShipGraphEvent]: Set<(p: ShipGraphEventMap[E]) => void> } = {
@@ -90,6 +95,7 @@ class ShipGraphImpl implements ShipGraph {
       focusZoom: options.focusZoom ?? DEFAULTS.focusZoom,
       respectReducedMotion: options.respectReducedMotion ?? true,
       draggable: options.draggable ?? true,
+      labelMaxNodes: options.labelMaxNodes ?? DEFAULTS.labelMaxNodes,
       nodeColor: options.nodeColor ?? ((n) => communityColor(n.community)),
     };
     this.physics = {
@@ -175,7 +181,13 @@ class ShipGraphImpl implements ShipGraph {
         ctx.strokeStyle = '#eafff5';
         ctx.stroke();
       }
-      if ((scale > 2 && !dim) || n.id === this.selectedNode) {
+      // Labels render at a constant ~11 CSS px (the 1/scale cancels the camera
+      // transform), so zoom was never about legibility — only about crowding.
+      // Gate on how many nodes are actually on screen instead: a filtered or
+      // naturally small graph gets named immediately, a dense one waits for a
+      // zoom that spreads it out. The selected node is always named.
+      const roomForLabels = this.visibleNodeCount <= this.opts.labelMaxNodes;
+      if ((!dim && (roomForLabels || scale > 2)) || n.id === this.selectedNode) {
         ctx.font = `${11 / scale}px ui-sans-serif, sans-serif`;
         ctx.fillStyle = 'rgba(230,237,243,.85)';
         ctx.fillText(n.label, n.x + r + 2, n.y + 3 / scale);
@@ -259,7 +271,9 @@ class ShipGraphImpl implements ShipGraph {
   }
 
   private rebuild(): void {
-    this.engine.setData(applyView(this.full, this.activeRelations, this.hidden, this.hiddenRelations));
+    const view = applyView(this.full, this.activeRelations, this.hidden, this.hiddenRelations);
+    this.visibleNodeCount = view.nodes.length;
+    this.engine.setData(view);
     this.engine.refresh();
   }
 

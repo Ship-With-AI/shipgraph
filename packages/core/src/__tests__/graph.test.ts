@@ -301,3 +301,68 @@ describe('nodeColor option', () => {
     expect(paint(engine, { id: 'c', community: 2 })).toBe('#888888');
   });
 });
+
+// Labels are drawn at a constant ~11 CSS px, so visibility is a crowding
+// decision, not a legibility one. Capture whether fillText ran for a node.
+function labelled(engine: FakeEngine, id: string, scale: number): boolean {
+  let drew = false;
+  const ctx = {
+    set fillStyle(_v: string) {},
+    get fillStyle() {
+      return '';
+    },
+    beginPath() {},
+    arc() {},
+    fill() {},
+    stroke() {},
+    fillText() {
+      drew = true;
+    },
+    strokeStyle: '',
+    lineWidth: 0,
+    font: '',
+  } as unknown as CanvasRenderingContext2D;
+  engine.nodeRenderer?.(
+    { id, label: id, type: null, community: null, communityName: null, degree: 1, x: 0, y: 0 },
+    ctx,
+    scale,
+  );
+  return drew;
+}
+
+function bigGraph(nodeCount: number): RawGraph {
+  const nodes = Array.from({ length: nodeCount }, (_, i) => ({ id: `n${i}`, label: `N${i}` }));
+  return { nodes, links: [] };
+}
+
+describe('label crowding (labelMaxNodes)', () => {
+  it('names every node when the rendered graph is small, without zooming', () => {
+    createGraphWithEngine(container, engine, raw);
+    expect(labelled(engine, 'a', 1)).toBe(true);
+  });
+
+  it('holds labels back on a dense graph until you zoom in', () => {
+    createGraphWithEngine(container, engine, bigGraph(200));
+    expect(labelled(engine, 'n0', 1)).toBe(false);
+    expect(labelled(engine, 'n0', 3)).toBe(true);
+  });
+
+  it('names a dense graph once a filter thins it out', () => {
+    // The regression this fixes: picking a topic left ~50 nodes on screen at a
+    // fit zoom below 2, so nothing was named until the user zoomed by hand.
+    const g = createGraphWithEngine(container, engine, {
+      nodes: bigGraph(200).nodes,
+      links: [{ source: 'n0', target: 'n1', relation: 'references' }],
+    });
+    expect(labelled(engine, 'n0', 1)).toBe(false);
+
+    g.setData(bigGraph(40));
+    expect(labelled(engine, 'n0', 1)).toBe(true);
+  });
+
+  it('honors an explicit ceiling', () => {
+    createGraphWithEngine(container, engine, raw, { labelMaxNodes: 0 });
+    expect(labelled(engine, 'a', 1)).toBe(false);
+    expect(labelled(engine, 'a', 3)).toBe(true);
+  });
+});

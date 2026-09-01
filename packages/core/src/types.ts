@@ -88,6 +88,15 @@ export interface ShipGraphOptions {
   /** Allow dragging nodes with spring-back on release. Default true. */
   draggable?: boolean;
   /**
+   * Node-count ceiling for always-on labels. Labels render at a fixed ~11 CSS
+   * px whatever the zoom, so this is about crowding, not legibility: at or
+   * below this many rendered nodes every node is named immediately, above it
+   * labels wait until you zoom in past 2x. Filtering the graph therefore names
+   * what is left without any zooming. Default 120; use 0 to require zoom
+   * always, Infinity to label unconditionally.
+   */
+  labelMaxNodes?: number;
+  /**
    * Resolve a node's fill color. Defaults to the built-in community palette,
    * which is a hue hash — fine for spotting clusters, meaningless as a legend.
    * Supply this to color by something the reader already understands (a topic,
